@@ -20,6 +20,7 @@ src/%.o: src/%.s
 
 kernel.bin: src/linker.ld $(objects)
 	ld $(LDPARAMS) -T $< -o $@ $(objects)
+	rm $(objects)
 
 kernel.iso: kernel.bin
 	mkdir iso

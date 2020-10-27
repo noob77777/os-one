@@ -10,7 +10,7 @@ void kprintf(const char *str)
 
 extern "C" void kernel_main(void *multiboot_struct, unsigned int magic_number)
 {
-    kprintf("OS-ONE (version 0.0.1-target=i386).");
+    kprintf("OS-ONE (version 0.0.1-target=i386)");
     for (;;)
         ;
 }
