@@ -9,6 +9,15 @@ void kprintf(const char *str)
     }
 }
 
+typedef void (*constructor)();
+extern "C" constructor start_ctors;
+extern "C" constructor end_ctors;
+extern "C" void init_constructors()
+{
+    for(constructor* i = &start_ctors; i != &end_ctors; i++)
+        (*i)();
+}
+
 extern "C" void kernel_main(void *multiboot_struct, uint32_t magic_number)
 {
     kprintf("OS-ONE (version 0.0.1-target=i386)");

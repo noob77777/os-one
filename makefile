@@ -38,3 +38,6 @@ kernel.iso: kernel.bin
 	grub-mkrescue --output=kernel.iso iso
 	rm -rf iso
 	mv kernel.iso prod/kernel.iso
+
+run: kernel.iso
+	qemu-system-i386 prod/kernel.iso
