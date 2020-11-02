@@ -1,4 +1,4 @@
-.set MAGIC, 0x1badb002
+.set MAGIC, 0x1BADB002
 .set FLAGS, 0x00
 .set CHECKSUM, -(MAGIC + FLAGS)
 
@@ -16,14 +16,26 @@ loader:
     mov $kernel_stack, %esp
     mov %esp, %ebp
     call init_constructors
-    push %eax
-    push %ebx
+    call _setup_segments
+    movl 0x0, %eax
+    pushl %eax
     call kernel_main
 _stop:
     cli
     hlt
     jmp _stop
 
+_setup_segments:
+    jmp $0x08, $.next
+.next:
+    mov $0x10, %ax
+    mov %ax, %ds
+    mov %ax, %es
+    mov %ax, %fs
+    mov %ax, %gs
+    mov %ax, %ss
+    ret
+
 .section .bss
-.space 2*1024*1024 ; # 2 MiB
+.space 16*1024*1024 ; # 16 MiB
 kernel_stack:

@@ -1,11 +1,23 @@
 #include "include/types.h"
+#include "include/gdt.h"
+
+static int ptr = 0;
 
 void kprintf(const char *str)
 {
-    uint8_t *video_memory = (uint8_t *)0xb8000;
+    uint8_t *video_memory = (uint8_t *)0xB8000;
     for (int i = 0; str[i] != '\0'; i++)
     {
-        video_memory[2 * i] = str[i];
+        video_memory[2 * ptr++] = str[i];
+    }
+}
+
+void kprintf(uint32_t value)
+{
+    uint8_t *video_memory = (uint8_t *)0xB8000;
+    for (int bit = 0; bit < 32; bit++)
+    {
+        video_memory[2 * ptr++] = ((value & (1 << bit) ? '1' : '0'));
     }
 }
 
@@ -18,7 +30,9 @@ extern "C" void init_constructors()
         (*i)();
 }
 
-extern "C" void kernel_main(void *multiboot_struct, uint32_t magic_number)
+GlobalDescriptorTable GDT;
+
+extern "C" void kernel_main(uint32_t arg)
 {
     kprintf("OS-ONE (version 0.0.1-target=i386)");
     for (;;)

@@ -39,5 +39,5 @@ kernel.iso: kernel.bin
 	rm -rf iso
 	mv kernel.iso prod/kernel.iso
 
-run: kernel.iso
+run: kernel.iso src/tmp/kernel.s
 	qemu-system-i386 prod/kernel.iso
