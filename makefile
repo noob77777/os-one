@@ -30,7 +30,7 @@ kernel.iso: kernel.bin
 	echo 'set timeout=0'                     >> iso/boot/grub/grub.cfg
 	echo 'set default=0'                     >> iso/boot/grub/grub.cfg
 	echo ''                                  >> iso/boot/grub/grub.cfg
-	echo 'menuentry "My Operating System" {' >> iso/boot/grub/grub.cfg
+	echo 'menuentry "OS-ONE" {'              >> iso/boot/grub/grub.cfg
 	echo '  multiboot /boot/kernel.bin'      >> iso/boot/grub/grub.cfg
 	echo '  boot'                            >> iso/boot/grub/grub.cfg
 	echo '}'                                 >> iso/boot/grub/grub.cfg
@@ -39,5 +39,5 @@ kernel.iso: kernel.bin
 	rm -rf iso
 	mv kernel.iso prod/kernel.iso
 
-run: kernel.iso src/tmp/kernel.s
+run: kernel.iso
 	qemu-system-i386 prod/kernel.iso
