@@ -14,7 +14,7 @@ class KeyboardDriver : public DriverInterface
 
 public:
     KeyboardDriver() : DriverInterface(0x21), data_port(0x60),
-                       command_port(0x64)
+                       command_port(0x64), shift(0)
     {
         while (command_port.read() & 0x1)
             data_port.read();
@@ -25,7 +25,6 @@ public:
         command_port.write(0x60);
         data_port.write(status);
         data_port.write(0xF4);
-        shift = 0;
     }
     virtual uint32_t handle_interrupt(uint32_t esp)
     {
@@ -35,6 +34,8 @@ public:
             shift++;
         else if (key == 0xAA || key == 0xB6)
             shift--;
+        else if (key == 0x1D)
+            shift = 0;
         else if (key < 0x80)
         {
             switch (key)
@@ -44,148 +45,155 @@ public:
                 break;
 
             case 0x02:
-                kprintf(shift ? "!" :"1");
+                kprintf(shift ? "!" : "1");
                 break;
             case 0x03:
-                kprintf(shift ? "@" :"2");
+                kprintf(shift ? "@" : "2");
                 break;
             case 0x04:
-                kprintf(shift ? "#" :"3");
+                kprintf(shift ? "#" : "3");
                 break;
             case 0x05:
-                kprintf(shift ? "$" :"4");
+                kprintf(shift ? "$" : "4");
                 break;
             case 0x06:
-                kprintf(shift ? "%" :"5");
+                kprintf(shift ? "%" : "5");
                 break;
             case 0x07:
-                kprintf(shift ? "^" :"6");
+                kprintf(shift ? "^" : "6");
                 break;
             case 0x08:
-                kprintf(shift ? "&" :"7");
+                kprintf(shift ? "&" : "7");
                 break;
             case 0x09:
-                kprintf(shift ? "*" :"8");
+                kprintf(shift ? "*" : "8");
                 break;
             case 0x0A:
-                kprintf(shift ? "(" :"9");
+                kprintf(shift ? "(" : "9");
                 break;
             case 0x0B:
-                kprintf(shift ? ")" :"0");
+                kprintf(shift ? ")" : "0");
                 break;
             case 0x0C:
-                kprintf(shift ? "_" :"-");
+                kprintf(shift ? "_" : "-");
                 break;
             case 0x0D:
-                kprintf(shift ? "+" :"=");
+                kprintf(shift ? "+" : "=");
                 break;
             case 0x0E:
-                backspace();
+                display::backspace();
+                break;
+            case 0x0F:
+                kprintf("    ");
+                break;
+
+            case 0x53:
+                display::clear();
                 break;
 
             case 0x10:
-                kprintf(shift ? "Q" :"q");
+                kprintf(shift ? "Q" : "q");
                 break;
             case 0x11:
-                kprintf(shift ? "W" :"w");
+                kprintf(shift ? "W" : "w");
                 break;
             case 0x12:
-                kprintf(shift ? "E" :"e");
+                kprintf(shift ? "E" : "e");
                 break;
             case 0x13:
-                kprintf(shift ? "R" :"r");
+                kprintf(shift ? "R" : "r");
                 break;
             case 0x14:
-                kprintf(shift ? "T" :"t");
+                kprintf(shift ? "T" : "t");
                 break;
             case 0x15:
-                kprintf(shift ? "Y" :"y");
+                kprintf(shift ? "Y" : "y");
                 break;
             case 0x16:
-                kprintf(shift ? "U" :"u");
+                kprintf(shift ? "U" : "u");
                 break;
             case 0x17:
-                kprintf(shift ? "I" :"i");
+                kprintf(shift ? "I" : "i");
                 break;
             case 0x18:
-                kprintf(shift ? "O" :"o");
+                kprintf(shift ? "O" : "o");
                 break;
             case 0x19:
-                kprintf(shift ? "P" :"p");
+                kprintf(shift ? "P" : "p");
                 break;
             case 0x1A:
-                kprintf(shift ? "{" :"[");
+                kprintf(shift ? "{" : "[");
                 break;
             case 0x1B:
-                kprintf(shift ? "}" :"]");
+                kprintf(shift ? "}" : "]");
                 break;
 
             case 0x1E:
-                kprintf(shift ? "A" :"a");
+                kprintf(shift ? "A" : "a");
                 break;
             case 0x1F:
-                kprintf(shift ? "S" :"s");
+                kprintf(shift ? "S" : "s");
                 break;
             case 0x20:
-                kprintf(shift ? "D" :"d");
+                kprintf(shift ? "D" : "d");
                 break;
             case 0x21:
-                kprintf(shift ? "F" :"f");
+                kprintf(shift ? "F" : "f");
                 break;
             case 0x22:
-                kprintf(shift ? "G" :"g");
+                kprintf(shift ? "G" : "g");
                 break;
             case 0x23:
-                kprintf(shift ? "H" :"h");
+                kprintf(shift ? "H" : "h");
                 break;
             case 0x24:
-                kprintf(shift ? "J" :"j");
+                kprintf(shift ? "J" : "j");
                 break;
             case 0x25:
-                kprintf(shift ? "K" :"k");
+                kprintf(shift ? "K" : "k");
                 break;
             case 0x26:
-                kprintf(shift ? "L" :"l");
+                kprintf(shift ? "L" : "l");
                 break;
             case 0x27:
-                kprintf(shift ? ":" :";");
+                kprintf(shift ? ":" : ";");
                 break;
             case 0x28:
-                kprintf(shift ? "\"" :"'");
+                kprintf(shift ? "\"" : "'");
                 break;
             case 0x2B:
-                kprintf(shift ? "|" :"\\");
+                kprintf(shift ? "|" : "\\");
                 break;
 
             case 0x2C:
-                kprintf(shift ? "Z" :"z");
+                kprintf(shift ? "Z" : "z");
                 break;
             case 0x2D:
-                kprintf(shift ? "X" :"x");
+                kprintf(shift ? "X" : "x");
                 break;
             case 0x2E:
-                kprintf(shift ? "C" :"c");
+                kprintf(shift ? "C" : "c");
                 break;
             case 0x2F:
-                kprintf(shift ? "V" :"v");
+                kprintf(shift ? "V" : "v");
                 break;
             case 0x30:
-                kprintf(shift ? "B" :"b");
+                kprintf(shift ? "B" : "b");
                 break;
             case 0x31:
-                kprintf(shift ? "N" :"n");
+                kprintf(shift ? "N" : "n");
                 break;
             case 0x32:
-                kprintf(shift ? "M" :"m");
+                kprintf(shift ? "M" : "m");
                 break;
             case 0x33:
-                kprintf(shift ? "<" :",");
+                kprintf(shift ? "<" : ",");
                 break;
             case 0x34:
-                kprintf(shift ? ">" :".");
+                kprintf(shift ? ">" : ".");
                 break;
             case 0x35:
-                kprintf(shift ? "?" :"/");
+                kprintf(shift ? "?" : "/");
                 break;
 
             case 0x1C:

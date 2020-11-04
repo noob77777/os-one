@@ -22,7 +22,7 @@ extern "C" void kernel_main(uint32_t arg)
     interruptManager.add_driver(&keyboard);
     interruptManager.activate();
 
-    clear();
+    display::clear();
     kprintf("OS-ONE (version 0.0.1-target=i386)\n");
     
     for (;;)

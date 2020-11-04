@@ -11,22 +11,26 @@ static const char *hex = "0123456789ABCDEF";
 static int x_coordinate = 0;
 static int y_coordinate = 0;
 
-void clear()
+namespace display
 {
-    for (y_coordinate = 0; y_coordinate < HEIGHT; y_coordinate++)
-        for (x_coordinate = 0; x_coordinate < WIDTH; x_coordinate++)
-            VIDEO_MEMORY[2 * (80 * y_coordinate + x_coordinate)] = ' ';
-    x_coordinate = 0;
-    y_coordinate = 0;
-}
-
-void backspace()
-{
-    if (x_coordinate > 0) {
-        x_coordinate--;
-        VIDEO_MEMORY[2 * (WIDTH * y_coordinate + x_coordinate)] = ' ';
+    void clear()
+    {
+        for (y_coordinate = 0; y_coordinate < HEIGHT; y_coordinate++)
+            for (x_coordinate = 0; x_coordinate < WIDTH; x_coordinate++)
+                VIDEO_MEMORY[2 * (80 * y_coordinate + x_coordinate)] = ' ';
+        x_coordinate = 0;
+        y_coordinate = 0;
     }
-}
+
+    void backspace()
+    {
+        if (x_coordinate > 0)
+        {
+            x_coordinate--;
+            VIDEO_MEMORY[2 * (WIDTH * y_coordinate + x_coordinate)] = ' ';
+        }
+    }
+} // namespace display
 
 void kprintf(const char *str)
 {
