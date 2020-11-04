@@ -62,8 +62,9 @@ public:
 class GlobalDescriptorTable
 {
     const static int NUMBER_OF_SEGMENTS = 3;
+
     SegmentDescriptor gdt[NUMBER_OF_SEGMENTS];
-    uint32_t limit;
+    uint16_t limit;
     uint32_t base;
 
 public:
@@ -73,12 +74,16 @@ public:
         gdt[1] = SegmentDescriptor(0x0, 0xFFFFFFFF, 0x9A);
         gdt[2] = SegmentDescriptor(0x0, 0xFFFFFFFF, 0x92);
 
-        limit = (sizeof(gdt) - 1) << 16;
-        base = (uint32_t)gdt;
+        limit = (sizeof(gdt) - 1);
+        base = (uint32_t)this;
 
         __asm__ volatile("lgdt (%0)"
                          :
-                         : "p"(((uint8_t *)&limit) + 2));
+                         : "p"(((uint8_t *)&limit)));
+    }
+    uint32_t code_segment()
+    {
+        return 0x08;
     }
 
 } __attribute__((packed));

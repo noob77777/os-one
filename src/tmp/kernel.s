@@ -154,16 +154,14 @@ _ZN21GlobalDescriptorTableC2Ev:
 	movl	%eax, 16(%ecx)
 	movl	%edx, 20(%ecx)
 	movl	8(%ebp), %eax
-	movl	$1507328, 24(%eax)
+	movw	$23, 24(%eax)
+	movl	8(%ebp), %edx
 	movl	8(%ebp), %eax
-	movl	%eax, %edx
-	movl	8(%ebp), %eax
-	movl	%edx, 28(%eax)
+	movl	%edx, 26(%eax)
 	movl	8(%ebp), %eax
 	addl	$24, %eax
-	addl	$2, %eax
 #APP
-# 81 "src/include/gdt.h" 1
+# 82 "src/include/gdt.h" 1
 	lgdt (%eax)
 # 0 "" 2
 #NO_APP
@@ -182,6 +180,41 @@ _ZN21GlobalDescriptorTableC2Ev:
 	.size	_ZN21GlobalDescriptorTableC2Ev, .-_ZN21GlobalDescriptorTableC2Ev
 	.weak	_ZN21GlobalDescriptorTableC1Ev
 	.set	_ZN21GlobalDescriptorTableC1Ev,_ZN21GlobalDescriptorTableC2Ev
+	.text
+	.globl	handle_interrupt
+	.type	handle_interrupt, @function
+handle_interrupt:
+.LFB26:
+	.cfi_startproc
+	endbr32
+	pushl	%ebp
+	.cfi_def_cfa_offset 8
+	.cfi_offset 5, -8
+	movl	%esp, %ebp
+	.cfi_def_cfa_register 5
+	pushl	%ebx
+	subl	$20, %esp
+	.cfi_offset 3, -12
+	call	__x86.get_pc_thunk.ax
+	addl	$_GLOBAL_OFFSET_TABLE_, %eax
+	movl	8(%ebp), %edx
+	movb	%dl, -12(%ebp)
+	movzbl	-12(%ebp), %edx
+	subl	$8, %esp
+	pushl	12(%ebp)
+	pushl	%edx
+	movl	%eax, %ebx
+	call	_ZN16InterruptManager15HandleInterruptEhj@PLT
+	addl	$16, %esp
+	movl	-4(%ebp), %ebx
+	leave
+	.cfi_restore 5
+	.cfi_restore 3
+	.cfi_def_cfa 4, 4
+	ret
+	.cfi_endproc
+.LFE26:
+	.size	handle_interrupt, .-handle_interrupt
 	.local	_ZL12x_coordinate
 	.comm	_ZL12x_coordinate,4,4
 	.local	_ZL12y_coordinate
@@ -204,7 +237,7 @@ _ZL3hex:
 	.globl	_Z7kprintfPKc
 	.type	_Z7kprintfPKc, @function
 _Z7kprintfPKc:
-.LFB8:
+.LFB27:
 	.cfi_startproc
 	endbr32
 	pushl	%ebp
@@ -218,26 +251,26 @@ _Z7kprintfPKc:
 	call	__x86.get_pc_thunk.ax
 	addl	$_GLOBAL_OFFSET_TABLE_, %eax
 	movl	$0, -8(%ebp)
-.L15:
+.L17:
 	movl	-8(%ebp), %ecx
 	movl	8(%ebp), %edx
 	addl	%ecx, %edx
 	movzbl	(%edx), %edx
 	testb	%dl, %dl
-	je	.L16
+	je	.L18
 	movl	-8(%ebp), %ecx
 	movl	8(%ebp), %edx
 	addl	%ecx, %edx
 	movzbl	(%edx), %edx
 	movsbl	%dl, %edx
 	cmpl	$10, %edx
-	jne	.L7
+	jne	.L9
 	movl	$0, _ZL12x_coordinate@GOTOFF(%eax)
 	movl	_ZL12y_coordinate@GOTOFF(%eax), %edx
 	addl	$1, %edx
 	movl	%edx, _ZL12y_coordinate@GOTOFF(%eax)
-	jmp	.L8
-.L7:
+	jmp	.L10
+.L9:
 	movl	-8(%ebp), %ecx
 	movl	8(%ebp), %edx
 	leal	(%ecx,%edx), %ebx
@@ -257,28 +290,28 @@ _Z7kprintfPKc:
 	addl	$1, %edx
 	movl	%edx, _ZL12x_coordinate@GOTOFF(%eax)
 	nop
-.L8:
+.L10:
 	movl	_ZL12x_coordinate@GOTOFF(%eax), %edx
 	cmpl	$79, %edx
-	jle	.L9
+	jle	.L11
 	movl	$0, _ZL12x_coordinate@GOTOFF(%eax)
 	movl	_ZL12y_coordinate@GOTOFF(%eax), %edx
 	addl	$1, %edx
 	movl	%edx, _ZL12y_coordinate@GOTOFF(%eax)
-.L9:
+.L11:
 	movl	_ZL12y_coordinate@GOTOFF(%eax), %edx
 	cmpl	$24, %edx
-	jle	.L10
+	jle	.L12
 	movl	$0, _ZL12y_coordinate@GOTOFF(%eax)
-.L14:
+.L16:
 	movl	_ZL12y_coordinate@GOTOFF(%eax), %edx
 	cmpl	$24, %edx
-	jg	.L11
+	jg	.L13
 	movl	$0, _ZL12x_coordinate@GOTOFF(%eax)
-.L13:
+.L15:
 	movl	_ZL12x_coordinate@GOTOFF(%eax), %edx
 	cmpl	$79, %edx
-	jg	.L12
+	jg	.L14
 	movl	_ZL12y_coordinate@GOTOFF(%eax), %ecx
 	movl	%ecx, %edx
 	sall	$2, %edx
@@ -293,19 +326,19 @@ _Z7kprintfPKc:
 	movl	_ZL12x_coordinate@GOTOFF(%eax), %edx
 	addl	$1, %edx
 	movl	%edx, _ZL12x_coordinate@GOTOFF(%eax)
-	jmp	.L13
-.L12:
+	jmp	.L15
+.L14:
 	movl	_ZL12y_coordinate@GOTOFF(%eax), %edx
 	addl	$1, %edx
 	movl	%edx, _ZL12y_coordinate@GOTOFF(%eax)
-	jmp	.L14
-.L11:
+	jmp	.L16
+.L13:
 	movl	$0, _ZL12x_coordinate@GOTOFF(%eax)
 	movl	$0, _ZL12y_coordinate@GOTOFF(%eax)
-.L10:
+.L12:
 	addl	$1, -8(%ebp)
-	jmp	.L15
-.L16:
+	jmp	.L17
+.L18:
 	nop
 	addl	$16, %esp
 	popl	%ebx
@@ -315,7 +348,7 @@ _Z7kprintfPKc:
 	.cfi_def_cfa 4, 4
 	ret
 	.cfi_endproc
-.LFE8:
+.LFE27:
 	.size	_Z7kprintfPKc, .-_Z7kprintfPKc
 	.section	.rodata
 .LC1:
@@ -324,7 +357,7 @@ _Z7kprintfPKc:
 	.globl	_Z12kprintf_hex8hb
 	.type	_Z12kprintf_hex8hb, @function
 _Z12kprintf_hex8hb:
-.LFB9:
+.LFB28:
 	.cfi_startproc
 	endbr32
 	pushl	%ebp
@@ -357,12 +390,12 @@ _Z12kprintf_hex8hb:
 	movzbl	(%edx), %edx
 	movb	%dl, (%ecx)
 	cmpb	$0, -24(%ebp)
-	je	.L18
+	je	.L20
 	leal	.LC1@GOTOFF(%eax), %eax
 	pushl	%eax
 	call	_Z7kprintfPKc
 	addl	$4, %esp
-.L18:
+.L20:
 	pushl	-4(%ebp)
 	call	_Z7kprintfPKc
 	addl	$4, %esp
@@ -372,12 +405,12 @@ _Z12kprintf_hex8hb:
 	.cfi_def_cfa 4, 4
 	ret
 	.cfi_endproc
-.LFE9:
+.LFE28:
 	.size	_Z12kprintf_hex8hb, .-_Z12kprintf_hex8hb
 	.globl	_Z11kprintf_hexj
 	.type	_Z11kprintf_hexj, @function
 _Z11kprintf_hexj:
-.LFB10:
+.LFB29:
 	.cfi_startproc
 	endbr32
 	pushl	%ebp
@@ -424,12 +457,12 @@ _Z11kprintf_hexj:
 	.cfi_def_cfa 4, 4
 	ret
 	.cfi_endproc
-.LFE10:
+.LFE29:
 	.size	_Z11kprintf_hexj, .-_Z11kprintf_hexj
 	.globl	init_constructors
 	.type	init_constructors, @function
 init_constructors:
-.LFB11:
+.LFB30:
 	.cfi_startproc
 	endbr32
 	pushl	%ebp
@@ -444,16 +477,16 @@ init_constructors:
 	addl	$_GLOBAL_OFFSET_TABLE_, %ebx
 	movl	start_ctors@GOT(%ebx), %eax
 	movl	%eax, -12(%ebp)
-.L22:
+.L24:
 	movl	end_ctors@GOT(%ebx), %eax
 	cmpl	%eax, -12(%ebp)
-	je	.L23
+	je	.L25
 	movl	-12(%ebp), %eax
 	movl	(%eax), %eax
 	call	*%eax
 	addl	$4, -12(%ebp)
-	jmp	.L22
-.L23:
+	jmp	.L24
+.L25:
 	nop
 	addl	$20, %esp
 	popl	%ebx
@@ -463,15 +496,15 @@ init_constructors:
 	.cfi_def_cfa 4, 4
 	ret
 	.cfi_endproc
-.LFE11:
+.LFE30:
 	.size	init_constructors, .-init_constructors
 	.globl	GDT
 	.bss
-	.align 32
+	.align 4
 	.type	GDT, @object
-	.size	GDT, 32
+	.size	GDT, 30
 GDT:
-	.zero	32
+	.zero	30
 	.section	.rodata
 	.align 4
 .LC2:
@@ -480,7 +513,7 @@ GDT:
 	.globl	kernel_main
 	.type	kernel_main, @function
 kernel_main:
-.LFB12:
+.LFB31:
 	.cfi_startproc
 	endbr32
 	pushl	%ebp
@@ -488,26 +521,20 @@ kernel_main:
 	.cfi_offset 5, -8
 	movl	%esp, %ebp
 	.cfi_def_cfa_register 5
-	pushl	%ebx
-	.cfi_offset 3, -12
-	call	__x86.get_pc_thunk.bx
-	addl	$_GLOBAL_OFFSET_TABLE_, %ebx
-	pushl	$1
-	pushl	$43
-	call	_Z12kprintf_hex8hb
-	addl	$8, %esp
-	leal	.LC2@GOTOFF(%ebx), %eax
+	call	__x86.get_pc_thunk.ax
+	addl	$_GLOBAL_OFFSET_TABLE_, %eax
+	leal	.LC2@GOTOFF(%eax), %eax
 	pushl	%eax
 	call	_Z7kprintfPKc
 	addl	$4, %esp
-.L25:
-	jmp	.L25
+.L27:
+	jmp	.L27
 	.cfi_endproc
-.LFE12:
+.LFE31:
 	.size	kernel_main, .-kernel_main
 	.type	_Z41__static_initialization_and_destruction_0ii, @function
 _Z41__static_initialization_and_destruction_0ii:
-.LFB13:
+.LFB32:
 	.cfi_startproc
 	endbr32
 	pushl	%ebp
@@ -519,26 +546,26 @@ _Z41__static_initialization_and_destruction_0ii:
 	call	__x86.get_pc_thunk.ax
 	addl	$_GLOBAL_OFFSET_TABLE_, %eax
 	cmpl	$1, 8(%ebp)
-	jne	.L28
+	jne	.L30
 	cmpl	$65535, 12(%ebp)
-	jne	.L28
+	jne	.L30
 	subl	$12, %esp
 	leal	GDT@GOTOFF(%eax), %eax
 	pushl	%eax
 	call	_ZN21GlobalDescriptorTableC1Ev
 	addl	$16, %esp
-.L28:
+.L30:
 	nop
 	leave
 	.cfi_restore 5
 	.cfi_def_cfa 4, 4
 	ret
 	.cfi_endproc
-.LFE13:
+.LFE32:
 	.size	_Z41__static_initialization_and_destruction_0ii, .-_Z41__static_initialization_and_destruction_0ii
-	.type	_GLOBAL__sub_I__Z7kprintfPKc, @function
-_GLOBAL__sub_I__Z7kprintfPKc:
-.LFB14:
+	.type	_GLOBAL__sub_I_handle_interrupt, @function
+_GLOBAL__sub_I_handle_interrupt:
+.LFB33:
 	.cfi_startproc
 	endbr32
 	pushl	%ebp
@@ -559,33 +586,33 @@ _GLOBAL__sub_I__Z7kprintfPKc:
 	.cfi_def_cfa 4, 4
 	ret
 	.cfi_endproc
-.LFE14:
-	.size	_GLOBAL__sub_I__Z7kprintfPKc, .-_GLOBAL__sub_I__Z7kprintfPKc
+.LFE33:
+	.size	_GLOBAL__sub_I_handle_interrupt, .-_GLOBAL__sub_I_handle_interrupt
 	.section	.init_array,"aw"
 	.align 4
-	.long	_GLOBAL__sub_I__Z7kprintfPKc
+	.long	_GLOBAL__sub_I_handle_interrupt
 	.section	.text.__x86.get_pc_thunk.ax,"axG",@progbits,__x86.get_pc_thunk.ax,comdat
 	.globl	__x86.get_pc_thunk.ax
 	.hidden	__x86.get_pc_thunk.ax
 	.type	__x86.get_pc_thunk.ax, @function
 __x86.get_pc_thunk.ax:
-.LFB15:
+.LFB34:
 	.cfi_startproc
 	movl	(%esp), %eax
 	ret
 	.cfi_endproc
-.LFE15:
+.LFE34:
 	.section	.text.__x86.get_pc_thunk.bx,"axG",@progbits,__x86.get_pc_thunk.bx,comdat
 	.globl	__x86.get_pc_thunk.bx
 	.hidden	__x86.get_pc_thunk.bx
 	.type	__x86.get_pc_thunk.bx, @function
 __x86.get_pc_thunk.bx:
-.LFB16:
+.LFB35:
 	.cfi_startproc
 	movl	(%esp), %ebx
 	ret
 	.cfi_endproc
-.LFE16:
+.LFE35:
 	.ident	"GCC: (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0"
 	.section	.note.GNU-stack,"",@progbits
 	.section	.note.gnu.property,"a"

@@ -1,5 +1,6 @@
 #include "include/types.h"
 #include "include/gdt.h"
+#include "include/idt.h"
 #include "drivers/display.h"
 
 typedef void (*constructor)();
@@ -15,7 +16,10 @@ GlobalDescriptorTable GDT;
 
 extern "C" void kernel_main(uint32_t arg)
 {
-    kprintf("OS-ONE (version 0.0.1-target=i386)");
+    InterruptManager interruptManager(&GDT);
+    interruptManager.activate();
+
+    kprintf("OS-ONE (version 0.0.1-target=i386)\n");
     for (;;)
         ;
 }
