@@ -6,7 +6,6 @@
 #include "port.h"
 #include "../drivers/display.h"
 #include "../drivers/driver_interface.h"
-#include "../drivers/keyboard_driver.h"
 
 class GateDescriptor
 {
@@ -73,8 +72,6 @@ class InterruptManager
     static Port8bitPIC picSlaveCommandPort;
     static Port8bitPIC picSlaveDataPort;
 
-    KeyboardDriver keyboard;
-
 public:
     InterruptManager(GlobalDescriptorTable *GDT)
     {
@@ -98,8 +95,6 @@ public:
         picSlaveDataPort.write(0x01);
         picMasterDataPort.write(0x00);
         picSlaveDataPort.write(0x00);
-
-        add_driver(&keyboard);
     }
     ~InterruptManager()
     {
