@@ -41,7 +41,7 @@ public:
                          :
                          : "a"(_data), "Nd"(_port));
     }
-    static inline void write8_slow(uint16_t _port, uint8_t _data)
+    static inline void write8_pic(uint16_t _port, uint8_t _data)
     {
         __asm__ volatile("outb %0, %1\njmp 1f\n1: jmp 1f\n1:"
                          :
@@ -66,16 +66,16 @@ public:
     }
 };
 
-class Port8bitSlow : public Port8bit
+class Port8bitPIC : public Port8bit
 {
 public:
-    Port8bitSlow(uint16_t port) : Port8bit(port)
+    Port8bitPIC(uint16_t port) : Port8bit(port)
     {
         ;
     }
     void write(uint8_t data)
     {
-        write8_slow(port, data);
+        write8_pic(port, data);
     }
 };
 

@@ -1,6 +1,6 @@
 #include "include/types.h"
 #include "include/gdt.h"
-#include "include/idt.h"
+#include "include/interrupts.h"
 #include "drivers/display.h"
 
 typedef void (*constructor)();
@@ -19,7 +19,10 @@ extern "C" void kernel_main(uint32_t arg)
     InterruptManager interruptManager(&GDT);
     interruptManager.activate();
 
+    clear();
+
     kprintf("OS-ONE (version 0.0.1-target=i386)\n");
+    
     for (;;)
         ;
 }

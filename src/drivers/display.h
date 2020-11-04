@@ -3,10 +3,30 @@
 
 #include "../include/types.h"
 
-static int x_coordinate = 0;
-static int y_coordinate = 0;
+static const int WIDTH = 80;
+static const int HEIGHT = 25;
 static char *const VIDEO_MEMORY = (char *const)0xB8000;
 static const char *hex = "0123456789ABCDEF";
+
+static int x_coordinate = 0;
+static int y_coordinate = 0;
+
+void clear()
+{
+    for (y_coordinate = 0; y_coordinate < HEIGHT; y_coordinate++)
+        for (x_coordinate = 0; x_coordinate < WIDTH; x_coordinate++)
+            VIDEO_MEMORY[2 * (80 * y_coordinate + x_coordinate)] = ' ';
+    x_coordinate = 0;
+    y_coordinate = 0;
+}
+
+void backspace()
+{
+    if (x_coordinate > 0) {
+        x_coordinate--;
+        VIDEO_MEMORY[2 * (WIDTH * y_coordinate + x_coordinate)] = ' ';
+    }
+}
 
 void kprintf(const char *str)
 {
@@ -19,21 +39,21 @@ void kprintf(const char *str)
             y_coordinate++;
             break;
         default:
-            VIDEO_MEMORY[2 * (80 * y_coordinate + x_coordinate)] = str[i];
+            VIDEO_MEMORY[2 * (WIDTH * y_coordinate + x_coordinate)] = str[i];
             x_coordinate++;
             break;
         }
 
-        if (x_coordinate >= 80)
+        if (x_coordinate >= WIDTH)
         {
             x_coordinate = 0;
             y_coordinate++;
         }
 
-        if (y_coordinate >= 25)
+        if (y_coordinate >= HEIGHT)
         {
-            for (y_coordinate = 0; y_coordinate < 25; y_coordinate++)
-                for (x_coordinate = 0; x_coordinate < 80; x_coordinate++)
+            for (y_coordinate = 0; y_coordinate < HEIGHT; y_coordinate++)
+                for (x_coordinate = 0; x_coordinate < WIDTH; x_coordinate++)
                     VIDEO_MEMORY[2 * (80 * y_coordinate + x_coordinate)] = ' ';
             x_coordinate = 0;
             y_coordinate = 0;
