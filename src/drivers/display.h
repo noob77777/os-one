@@ -42,6 +42,9 @@ void kprintf(const char *str)
             x_coordinate = 0;
             y_coordinate++;
             break;
+        case '\t':
+            x_coordinate += 4;
+            break;
         default:
             VIDEO_MEMORY[2 * (WIDTH * y_coordinate + x_coordinate)] = str[i];
             x_coordinate++;
