@@ -6,7 +6,7 @@ GCCPARAMS = -m32 -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-excep
 ASPARAMS = --32
 LDPARAMS = -melf_i386
 
-objects = src/loader.o src/interrupt_stubs.o src/kernel.o
+objects = src/loader.o src/interrupt_stubs.o src/kernel.o src/virtual_memory.o
 
 
 src/tmp/%.s: src/%.cpp
