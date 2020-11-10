@@ -1,8 +1,8 @@
-#ifndef __DRIVER_INTERFACE
-#define __DRIVER_INTERFACE
+#ifndef __DRIVER_INTERFACE_H
+#define __DRIVER_INTERFACE_H
 
-#include "../include/types.h"
-#include "display.h"
+#include <types.h>
+#include <drivers/display.h>
 
 class InterruptManager;
 

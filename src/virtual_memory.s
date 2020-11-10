@@ -6,7 +6,7 @@ enable_virtual_memory:
     movl 8(%esp), %eax
     movl %eax, %cr3
     movl %cr0, %eax
-    ; # or $0x80000000, %eax
+    or $0x80000000, %eax
     movl %eax, %cr0
     popl %eax
     ret

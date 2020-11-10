@@ -1,11 +1,10 @@
-#ifndef __IDT_H
-#define __IDT_H
+#ifndef __INTERRUPTS_H
+#define __INTERRUPTS_H
 
-#include "types.h"
-#include "gdt.h"
-#include "port.h"
-#include "../drivers/display.h"
-#include "../drivers/driver_interface.h"
+#include <types.h>
+#include <memory/gdt.h>
+#include <hardware/port.h>
+#include <drivers/driver_interface.h>
 
 class GateDescriptor
 {

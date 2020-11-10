@@ -1,10 +1,10 @@
 #ifndef __KEYBOARD_DRIVER_H
 #define __KEYBOARD_DRIVER_H
 
-#include "../include/types.h"
-#include "../include/port.h"
-#include "driver_interface.h"
-#include "display.h"
+#include <types.h>
+#include <hardware/port.h>
+#include <drivers/driver_interface.h>
+#include <drivers/display.h>
 
 class KeyboardDriver : public DriverInterface
 {

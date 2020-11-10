@@ -2,7 +2,7 @@
 # sudo apt-get install g++ binutils libc6-dev-i386
 # sudo apt-get install xorriso
 
-GCCPARAMS = -m32 -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore
+GCCPARAMS = -m32 -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -I src/include
 ASPARAMS = --32
 LDPARAMS = -melf_i386
 

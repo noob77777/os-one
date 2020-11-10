@@ -1,7 +1,7 @@
 #ifndef __DISPLAY_H
 #define __DISPLAY_H
 
-#include "../include/types.h"
+#include <types.h>
 
 static const int WIDTH = 80;
 static const int HEIGHT = 25;
