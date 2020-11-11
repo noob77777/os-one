@@ -10,8 +10,6 @@ class KeyboardDriver : public DriverInterface
 {
     Port8bit data_port;
     Port8bit command_port;
-    uint8_t shift;
-
     void keypress(char chr)
     {
         const char string[2] = {chr, '\0'};
@@ -20,6 +18,10 @@ class KeyboardDriver : public DriverInterface
     }
 
 public:
+    uint8_t shift;
+    uint8_t ctrl;
+    uint8_t SIGINT = 0;
+
     KeyboardDriver() : DriverInterface(0x21), data_port(0x60),
                        command_port(0x64), shift(0)
     {
@@ -42,7 +44,9 @@ public:
         else if (key == 0xAA || key == 0xB6)
             shift--;
         else if (key == 0x1D)
-            shift = 0;
+            shift = 0, ctrl = 1;
+        else if (key == 0x9D)
+            shift = 0, ctrl = 0;
         else if (key < 0x80)
         {
             switch (key)
@@ -179,6 +183,8 @@ public:
                 keypress(shift ? 'X' : 'x');
                 break;
             case 0x2E:
+                if (ctrl)
+                    SIGINT = 1;
                 keypress(shift ? 'C' : 'c');
                 break;
             case 0x2F:
