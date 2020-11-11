@@ -2,22 +2,22 @@
 #define __TERMINAL_H
 
 #include <types.h>
-#include <sys/process.h>
+#include <sys/program.h>
 #include <drivers/keyboard_driver.h>
 #include <drivers/display.h>
 
-class Terminal : public Process
+class Terminal : public Program
 {
-    ProcessManager *process_manager;
+    ProgramManager *program_manager;
 
 public:
-    Terminal(ProcessManager *process_manager, KeyboardDriver *keyboard) : Process(keyboard)
+    Terminal(ProgramManager *program_manager, KeyboardDriver *keyboard) : Program(keyboard)
     {
-        this->process_manager = process_manager;
+        this->program_manager = program_manager;
     }
     virtual int run(int argc, char *const argv[], char *const env[])
     {
-        kprintf("Terminal\n");
+        kprintf("root@host: ");
         for (;;)
             ;
         return 0;

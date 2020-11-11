@@ -1,16 +1,16 @@
-#ifndef __PROCESS_H
-#define __PROCESS_H
+#ifndef __PROGRAM_H
+#define __PROGRAM_H
 
 #include <types.h>
 #include <drivers/keyboard_driver.h>
 
 class Terminal;
 
-class Process
+class Program
 {
 protected:
     KeyboardDriver *keyboard;
-    Process(KeyboardDriver *keyboard)
+    Program(KeyboardDriver *keyboard)
     {
         this->keyboard = keyboard;
     }
@@ -22,38 +22,26 @@ public:
     }
 };
 
-class ProcessManager
+class ProgramManager
 {
     static const int PSMAX = 256;
-    Process *ps[PSMAX];
+    Program *ps[PSMAX];
     int ptr;
 
 public:
-    ProcessManager()
+    ProgramManager()
     {
         ptr = 0;
     }
-    void add_process(Process *process)
+    void add_program(Program *program)
     {
-        ps[ptr++] = process;
+        ps[ptr++] = program;
     }
     void start()
     {
         ps[0]->run(0, nullptr, nullptr);
     }
     friend class Terminal;
-};
-
-class Test : public Process
-{
-
-public:
-    Test(KeyboardDriver *keyboard) : Process(keyboard) { ; }
-    virtual int run(int argc, char *const argv[], char *const env[])
-    {
-        kprintf("Test\n");
-        return 0;
-    }
 };
 
 #endif
