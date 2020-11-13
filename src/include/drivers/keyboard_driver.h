@@ -6,15 +6,24 @@
 #include <drivers/driver_interface.h>
 #include <drivers/display.h>
 
+namespace keyboard_driver
+{
+    void default_handler(char chr)
+    {
+        const char string[2] = {chr, '\0'};
+        kprintf(string);
+    }
+} // namespace keyboard_driver
+
 class KeyboardDriver : public DriverInterface
 {
     Port8bit data_port;
     Port8bit command_port;
+    void (*key_press_handler)(char);
+
     void keypress(char chr)
     {
-        const char string[2] = {chr, '\0'};
-        kprintf(string);
-        return;
+        key_press_handler(chr);
     }
 
 public:
@@ -34,7 +43,19 @@ public:
         command_port.write(0x60);
         data_port.write(status);
         data_port.write(0xF4);
+        key_press_handler = keyboard_driver::default_handler;
     }
+
+    void on_key_press(void (*key_press_handler)(char))
+    {
+        this->key_press_handler = key_press_handler;
+    }
+
+    void reset()
+    {
+        this->key_press_handler = keyboard_driver::default_handler;
+    }
+
     virtual uint32_t handle_interrupt(uint32_t esp)
     {
         uint8_t key = data_port.read();

@@ -4,6 +4,7 @@
 #include <hardware/interrupts.h>
 #include <drivers/display.h>
 #include <drivers/keyboard_driver.h>
+#include <drivers/ata.h>
 #include <sys/program.h>
 #include <sys/terminal.h>
 
@@ -30,6 +31,7 @@ extern "C" void kernel_main(uint32_t arg)
 
     display::clear();
     kprintf("OS-ONE (version 0.0.1-target=i386)\n");
+    ATA::ata_check();
 
     ProgramManager program_manager;
     Terminal terminal(&program_manager, &keyboard);
