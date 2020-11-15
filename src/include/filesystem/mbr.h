@@ -19,7 +19,7 @@ public:
         unused = 0;
         for (int i = 0; i < 64; i++)
             primary_partition[i] = 0;
-        magicnumber = 0x7777;
+        magicnumber = 0x55AA;
     }
 } __attribute__((packed));
 
