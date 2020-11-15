@@ -20,15 +20,16 @@ public:
         if (status)
             return status;
 
-        uint32_t fat[1024 * 256];
+        uint32_t fat[1024];
         fat[0] = 2;
         fat[1] = 0;
 
-        for (int i = 2; i < 1024 * 256; i++)
+        for (int i = 2; i < 1024; i++)
             fat[i] = i + 1;
 
         int lba = 8;
-        for (int i = 0; i < 1024 * 256; i += 128) {
+        for (int i = 0; i < 128; i += 128)
+        {
             status = ataDisk->write(lba++, (uint8_t *)&fat[i], 512);
             status = ataDisk->flush();
         }
@@ -146,13 +147,9 @@ public:
         kprintf("Formatting Disk...\n");
         status = format_disk();
         if (!status)
-        {
             kprintf("Disk Ready!\n");
-        }
         else
-        {
             kprintf("Disk Error\n");
-        }
     }
 
     uint32_t read(uint32_t fd, uint8_t *data, int count)
@@ -169,7 +166,6 @@ public:
     {
         return 0;
     }
-
 };
 
 #endif

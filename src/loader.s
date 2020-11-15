@@ -37,5 +37,5 @@ _setup_segments:
     ret
 
 .section .bss
-.space 32*1024*1024 ; # 32 MiB
+.space 16*1024*1024 ; # 16 MiB
 kernel_stack:
