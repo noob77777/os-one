@@ -16,21 +16,22 @@ public:
         uint8_t status = 0;
         MasterBootRecord mbr = MasterBootRecord();
         status = ataDisk->write(1, (uint8_t *)&mbr, sizeof(mbr));
+        status = ataDisk->flush();
         if (status)
             return status;
 
-        uint32_t fat[1024 * 1024];
+        uint32_t fat[1024 * 256];
         fat[0] = 2;
         fat[1] = 0;
 
-        for (int i = 2; i < 1024 * 1024; i++)
+        for (int i = 2; i < 1024 * 256; i++)
             fat[i] = i + 1;
 
         int lba = 8;
-        for (int i = 0; i < 128; i += 128)
+        for (int i = 0; i < 1024 * 256; i += 128) {
             status = ataDisk->write(lba++, (uint8_t *)&fat[i], 512);
-
-        status = ataDisk->flush();
+            status = ataDisk->flush();
+        }
 
         return status;
     }
@@ -63,10 +64,10 @@ public:
         {
             uint32_t wdata = (count >= 512 ? 512 : count);
             status = ataDisk->write(lba++, (data + (i * 512)), wdata);
+            status = ataDisk->flush();
             count = count - wdata;
         }
 
-        status = ataDisk->flush();
         return status;
     }
 
