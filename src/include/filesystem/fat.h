@@ -27,8 +27,8 @@ public:
             fat[i] = i + 1;
 
         int lba = 8;
-        for (int i = 0; i < 1024 * 1024; i += 128)
-            status = ataDisk->write(lba++, (uint8_t *)&fat[i], 512);
+        // for (int i = 0; i < 1024 * 1024; i += 128)
+        //     status = ataDisk->write(lba++, (uint8_t *)&fat[i], 512);
 
         status = ataDisk->flush();
 
