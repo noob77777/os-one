@@ -5,6 +5,7 @@
 #include <drivers/display.h>
 #include <drivers/keyboard_driver.h>
 #include <drivers/ata.h>
+#include <filesystem/fat.h>
 #include <sys/program.h>
 #include <sys/terminal.h>
 
@@ -31,8 +32,24 @@ extern "C" void kernel_main(uint32_t arg)
 
     display::clear();
     kprintf("OS-ONE (version 0.0.1-target=i386)\n");
-    ATA::ata_check();
 
+    ATA::ata_check();
+    ATA ataDisk(true, 0x01F0);
+    FAT fs(&ataDisk);
+    fs.init();
+
+    // fs tests
+    kprintf_hex(fs.allocate());
+    kprintf_hex(fs.allocate());
+    kprintf_hex(fs.allocate());
+    kprintf_hex(fs.allocate());
+    kprintf_hex(fs.free(2));
+    kprintf_hex(fs.allocate());
+    kprintf_hex(fs.allocate());
+    kprintf_hex(fs.allocate());
+    kprintf_hex(fs.allocate());
+
+    kprintf("\n");
     ProgramManager program_manager;
     Terminal terminal(&program_manager, &keyboard);
     program_manager.add_program(&terminal);

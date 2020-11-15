@@ -154,7 +154,7 @@ public:
 
     static void ata_check()
     {
-        char test[512] = "Hello Disk!\n";
+        char test[512] = "Hello Disk!";
         char read[512];
 
         ATA ataDisk(true, 0x01F0);
