@@ -159,7 +159,7 @@ public:
 
         ATA ataDisk(true, 0x01F0);
         ataDisk.identify();
-        uint8_t status = ataDisk.write(1024 * 128, (uint8_t *)test, 512);
+        uint8_t status = ataDisk.write(1, (uint8_t *)test, 512);
         if (status)
         {
             kprintf_hex8(status);
@@ -171,7 +171,7 @@ public:
             kprintf_hex8(status);
             kprintf("\n");
         }
-        status = ataDisk.read(1024 * 128, (uint8_t *)read, 512);
+        status = ataDisk.read(1, (uint8_t *)read, 512);
         if (status)
         {
             kprintf_hex8(status);
