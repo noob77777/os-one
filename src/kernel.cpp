@@ -35,8 +35,8 @@ extern "C" void kernel_main(uint32_t arg)
 
     ATA::ata_check();
     ATA ataDisk(true, 0x01F0);
-    // FAT fs(&ataDisk);
-    // fs.init();
+    FAT fs(&ataDisk);
+    fs.init();
 
     // // fs tests
     // kprintf_hex(fs.allocate());
