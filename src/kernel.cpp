@@ -39,7 +39,7 @@ extern "C" void kernel_main(uint32_t arg)
     fs.init();
 
     // fs tests
-    for (int i = 0; i < 1024; i++) {
+    for (int i = 0; i < 128; i++) {
         uint32_t cluster = 0;
         kprintf_hex(cluster = fs.allocate());
         char write[4096] = "Test Data\n";

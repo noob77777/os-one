@@ -8,7 +8,7 @@
 
 class FAT
 {
-    static const int FAT_SIZE = 1024; // 4 MiB Disk
+    static const int FAT_SIZE = 128; // 512 KiB Disk
 public:
     ATA *ataDisk;
 
