@@ -39,16 +39,16 @@ extern "C" void kernel_main(uint32_t arg)
     fs.init();
 
     // fs tests
-    // for (int i = 0; i < 1024; i++) {
-    //     uint32_t cluster = 0;
-    //     kprintf_hex(cluster = fs.allocate());
-    //     char write[4096] = "Test Data\n";
-    //     fs.write_cluster(cluster, (uint8_t *)write, 4096);
-    //     char test[4096];
-    //     for(int i = 0; i < 4096; i++) test[i] = 0;
-    //     fs.read_cluster(cluster, (uint8_t *)test, 4096);
-    //     kprintf(test);
-    // }
+    for (int i = 0; i < 1024; i++) {
+        uint32_t cluster = 0;
+        kprintf_hex(cluster = fs.allocate());
+        char write[4096] = "Test Data\n";
+        fs.write_cluster(cluster, (uint8_t *)write, 4096);
+        char test[4096];
+        for(int i = 0; i < 4096; i++) test[i] = 0;
+        fs.read_cluster(cluster, (uint8_t *)test, 4096);
+        kprintf(test);
+    }
 
     kprintf("\n");
     ProgramManager program_manager;
