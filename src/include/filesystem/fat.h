@@ -15,20 +15,20 @@ public:
     {
         uint8_t status = 0;
         MasterBootRecord mbr = MasterBootRecord();
-        status = ataDisk->write(1, (uint8_t *)&mbr, sizeof(mbr));
+        status = ataDisk->write(0, (uint8_t *)&mbr, sizeof(mbr));
         status = ataDisk->flush();
         if (status)
             return status;
 
-        uint32_t fat[1024];
+        uint32_t fat[1024 * 1024];
         fat[0] = 2;
         fat[1] = 0;
 
-        for (int i = 2; i < 1024; i++)
+        for (int i = 2; i < 1024 * 1024; i++)
             fat[i] = i + 1;
 
         int lba = 8;
-        for (int i = 0; i < 128; i += 128)
+        for (int i = 0; i < 1024; i += 128)
         {
             status = ataDisk->write(lba++, (uint8_t *)&fat[i], 512);
             status = ataDisk->flush();
@@ -138,12 +138,12 @@ public:
     {
         uint8_t status = 0;
         MasterBootRecord mbr = MasterBootRecord();
-        status = ataDisk->read(1, (uint8_t *)&mbr, sizeof(mbr));
-        if (mbr.magicnumber == 0x55AA && mbr.signature == 7)
-        {
-            kprintf("Disk Ready!\n");
-            return;
-        }
+        status = ataDisk->read(0, (uint8_t *)&mbr, sizeof(mbr));
+        // if (mbr.magicnumber == 0x55AA && mbr.signature == 7)
+        // {
+        //     kprintf("Disk Ready!\n");
+        //     return;
+        // }
         kprintf("Formatting Disk...\n");
         status = format_disk();
         if (!status)
