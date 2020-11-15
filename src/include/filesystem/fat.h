@@ -8,6 +8,7 @@
 
 class FAT
 {
+    static const int FAT_SIZE = 1024;
 public:
     ATA *ataDisk;
 
@@ -20,15 +21,17 @@ public:
         if (status)
             return status;
 
-        uint32_t fat[1024 * 1024];
+        uint32_t fat[FAT_SIZE];
         fat[0] = 2;
         fat[1] = 0;
 
-        for (int i = 2; i < 1024 * 1024; i++)
+        for (int i = 2; i < FAT_SIZE; i++)
             fat[i] = i + 1;
 
+        fat[FAT_SIZE - 1] = 0xFFFFFFFF;
+
         int lba = 8;
-        for (int i = 0; i < 1024; i += 128)
+        for (int i = 0; i < FAT_SIZE; i += 128)
         {
             status = ataDisk->write(lba++, (uint8_t *)&fat[i], 512);
             status = ataDisk->flush();
