@@ -137,7 +137,7 @@ public:
         uint8_t status = 0;
         MasterBootRecord mbr = MasterBootRecord();
         status = ataDisk->read(0, (uint8_t *)&mbr, sizeof(mbr));
-        if (mbr.magicnumber == 0x55AA && mbr.signature == 7)
+        if (mbr.magicnumber == 0x7777 && mbr.signature == 7)
         {
             kprintf("Disk Ready!\n");
             return;
