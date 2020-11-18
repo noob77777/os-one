@@ -20,7 +20,7 @@ class FileSystem
 
     uint8_t get_next_cluster(uint8_t fd)
     {
-        uint32_t lba = BASE;
+        uint32_t lba = FAT_BASE;
         uint8_t fat[FS_SIZE];
         uint8_t status = ataDisk->read(lba, fat, FS_SIZE);
         if (status)
@@ -30,7 +30,7 @@ class FileSystem
 
     uint8_t set_next_cluster(uint8_t fd, uint8_t next)
     {
-        uint32_t lba = BASE;
+        uint32_t lba = FAT_BASE;
         uint8_t fat[FS_SIZE];
         uint8_t status = ataDisk->read(lba, fat, FS_SIZE);
         fat[fd] = next;
