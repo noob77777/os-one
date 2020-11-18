@@ -8,34 +8,14 @@
 
 class FileSystem
 {
-    static const int BASE = 0x10;
+    static const int FAT_BASE = 0x10;
+    static const int BASE = 0x20;
     static const int FS_SIZE = 256; // 128 KiB
     ATA *ataDisk;
 
-public:
-    uint8_t format_disk()
-    {
-        uint8_t status = 0;
-        MasterBootRecord mbr = MasterBootRecord();
-        status = ataDisk->write(0, (uint8_t *)&mbr, sizeof(mbr));
-        status = ataDisk->flush();
-        if (status)
-            return status;
-
-        uint8_t fat[FS_SIZE];
-
-        for (int i = 0; i < FS_SIZE; i++)
-            fat[i] = i + 1;
-
-        status = ataDisk->write(BASE, fat, FS_SIZE);
-        status = ataDisk->flush();
-
-        return status;
-    }
-
     uint32_t get_lba(uint8_t fd)
     {
-        return 0x20 + fd;
+        return BASE + fd;
     }
 
     uint8_t get_next_cluster(uint8_t fd)
@@ -105,16 +85,36 @@ public:
         this->ataDisk = ataDisk;
     }
 
+    uint8_t format_disk()
+    {
+        uint8_t status = 0;
+        MasterBootRecord mbr = MasterBootRecord();
+        status = ataDisk->write(0, (uint8_t *)&mbr, sizeof(mbr));
+        status = ataDisk->flush();
+        if (status)
+            return status;
+
+        uint8_t fat[FS_SIZE];
+
+        for (int i = 0; i < FS_SIZE; i++)
+            fat[i] = i + 1;
+
+        status = ataDisk->write(FAT_BASE, fat, FS_SIZE);
+        status = ataDisk->flush();
+
+        return status;
+    }
+
     void init()
     {
         uint8_t status = 0;
         MasterBootRecord mbr = MasterBootRecord();
         status = ataDisk->read(0, (uint8_t *)&mbr, sizeof(mbr));
-        // if (mbr.magicnumber == 0x55AA && mbr.signature == 7)
-        // {
-        //     kprintf("Disk Ready!\n");
-        //     return;
-        // }
+        if (mbr.magicnumber == 0x55AA && mbr.signature == 7)
+        {
+            kprintf("Disk Ready!\n");
+            return;
+        }
         kprintf("Formatting Disk...\n");
         status = format_disk();
         if (!status)
@@ -125,7 +125,8 @@ public:
 
     uint8_t read(uint8_t fd, uint8_t *data, int count)
     {
-        if (!allocated(fd)) return 0xFF;
+        if (!allocated(fd))
+            return 0xFF;
         uint32_t lba = get_lba(fd);
         uint8_t status = ataDisk->read(lba, data, count);
         return status;
@@ -133,7 +134,8 @@ public:
 
     uint8_t write(uint8_t fd, uint8_t *data, int count)
     {
-        if (!allocated(fd)) return 0xFF;
+        if (!allocated(fd))
+            return 0xFF;
         uint32_t lba = get_lba(fd);
         uint8_t status = ataDisk->write(lba, data, count);
         status = ataDisk->flush();

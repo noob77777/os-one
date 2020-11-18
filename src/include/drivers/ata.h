@@ -180,33 +180,26 @@ public:
         ATA ataDisk(true, 0x01F0);
         ataDisk.identify();
 
-        for (int i = 0x01; i <= 0x01; i++)
+        uint8_t status = ataDisk.write(8, (uint8_t *)test, 512);
+        if (status)
         {
-            kprintf_hex(i);
-            kprintf(" ");
-            uint8_t status = ataDisk.write(i, (uint8_t *)test, 512);
-            if (status)
-            {
-                kprintf_hex8(status);
-                kprintf("\n");
-            }
-            status = ataDisk.flush();
-            if (status)
-            {
-                kprintf_hex8(status);
-                kprintf("\n");
-            }
-            for (int j = 0; j < 512; j++)
-                read[i] = 0;
-            status = ataDisk.read(i, (uint8_t *)read, 512);
-            if (status)
-            {
-                kprintf_hex8(status);
-                kprintf("\n");
-            }
-            kprintf(read);
+            kprintf_hex8(status);
             kprintf("\n");
         }
+        status = ataDisk.flush();
+        if (status)
+        {
+            kprintf_hex8(status);
+            kprintf("\n");
+        }
+        status = ataDisk.read(8, (uint8_t *)read, 512);
+        if (status)
+        {
+            kprintf_hex8(status);
+            kprintf("\n");
+        }
+        kprintf(read);
+        kprintf("\n");
     }
 };
 
