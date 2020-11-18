@@ -37,6 +37,20 @@ extern "C" void kernel_main(uint32_t arg)
     ATA ataDisk(true, 0x01F0);
     FileSystem fs(&ataDisk);
     fs.init();
+
+    for (int i = 0; i < 1; i++)
+    {
+        kprintf_hex8(fs.allocate());
+    }
+    for (int i = 1; i <= 1; i++)
+    {
+        kprintf_hex8(fs.free(i));
+    }
+    for (int i = 0; i < 1; i++)
+    {
+        kprintf_hex8(fs.allocate());
+    }
+
     for (int i = 0; i < 128; i++) {
         uint8_t fd = 0;
         kprintf_hex8(fd = fs.allocate());

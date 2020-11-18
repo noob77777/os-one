@@ -86,11 +86,14 @@ public:
         command_port.write(0x20);
 
         uint8_t status = command_port.read();
+        if (status == 0x00)
+            return 2;
+
         while (((status & 0x80) == 0x80) && ((status & 0x01) != 0x01))
             status = command_port.read();
 
         if (status & 0x01)
-            return 2;
+            return 3;
 
         for (int i = 0; i < count; i += 2)
         {
@@ -119,6 +122,16 @@ public:
         lba_mid_port.write((sector_num & 0x0000FF00) >> 8);
         lba_hi_port.write((sector_num & 0x00FF0000) >> 16);
         command_port.write(0x30);
+
+        uint8_t status = command_port.read();
+        if (status == 0x00)
+            return 3;
+
+        while (((status & 0x80) == 0x80) && ((status & 0x01) != 0x01))
+            status = command_port.read();
+
+        if (status & 0x01)
+            return 4;
 
         for (int i = 0; i < count; i += 2)
         {
@@ -156,10 +169,6 @@ public:
         if (status & 0x01)
             return 2;
 
-        int ptr = 0;
-        for (int i = 0; i < 1024 * 1024 * 128; i++)
-            ptr++;
-
         return 0;
     }
 
@@ -170,26 +179,34 @@ public:
 
         ATA ataDisk(true, 0x01F0);
         ataDisk.identify();
-        uint8_t status = ataDisk.write(1, (uint8_t *)test, 512);
-        if (status)
+
+        for (int i = 0x01; i <= 0x01; i++)
         {
-            kprintf_hex8(status);
+            kprintf_hex(i);
+            kprintf(" ");
+            uint8_t status = ataDisk.write(i, (uint8_t *)test, 512);
+            if (status)
+            {
+                kprintf_hex8(status);
+                kprintf("\n");
+            }
+            status = ataDisk.flush();
+            if (status)
+            {
+                kprintf_hex8(status);
+                kprintf("\n");
+            }
+            for (int j = 0; j < 512; j++)
+                read[i] = 0;
+            status = ataDisk.read(i, (uint8_t *)read, 512);
+            if (status)
+            {
+                kprintf_hex8(status);
+                kprintf("\n");
+            }
+            kprintf(read);
             kprintf("\n");
         }
-        status = ataDisk.flush();
-        if (status)
-        {
-            kprintf_hex8(status);
-            kprintf("\n");
-        }
-        status = ataDisk.read(1, (uint8_t *)read, 512);
-        if (status)
-        {
-            kprintf_hex8(status);
-            kprintf("\n");
-        }
-        kprintf(read);
-        kprintf("\n");
     }
 };
 

@@ -8,7 +8,7 @@
 
 class FileSystem
 {
-    static const int BASE = 0x08;
+    static const int BASE = 0x10;
     static const int FS_SIZE = 256; // 128 KiB
     ATA *ataDisk;
 
@@ -35,7 +35,7 @@ public:
 
     uint32_t get_lba(uint8_t fd)
     {
-        return 0x1000 + fd;
+        return 0x20 + fd;
     }
 
     uint8_t get_next_cluster(uint8_t fd)
@@ -136,6 +136,7 @@ public:
         if (!allocated(fd)) return 0xFF;
         uint32_t lba = get_lba(fd);
         uint8_t status = ataDisk->write(lba, data, count);
+        status = ataDisk->flush();
         return status;
     }
 
