@@ -39,13 +39,16 @@ extern "C" void kernel_main(uint32_t arg)
     fs.init();
     for (int i = 0; i < 128; i++) {
         uint8_t fd = 0;
-        kprintf_hex(fd = fs.allocate());
+        kprintf_hex8(fd = fs.allocate());
         char write[512] = "Test-Data\n";
-        kprintf_hex(fs.write(fd, (uint8_t *)write, 512));
+        kprintf_hex8(fs.write(fd, (uint8_t *)write, 512));
         char test[512];
         for(int i = 0; i < 512; i++) test[i] = 0;
-        kprintf_hex(fs.read(fd, (uint8_t *)test, 512));
+        kprintf_hex8(fs.read(fd, (uint8_t *)test, 512));
         kprintf(test);
+    }
+    for (int i = 1; i <= 128; i++) {
+        kprintf_hex8(fs.free(i));
     }
 
     kprintf("\n");

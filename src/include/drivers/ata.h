@@ -157,7 +157,7 @@ public:
             return 2;
 
         int ptr = 0;
-        for (int i = 0; i < 1024 * 1024 * 8; i++)
+        for (int i = 0; i < 1024 * 1024 * 128; i++)
             ptr++;
 
         return 0;
