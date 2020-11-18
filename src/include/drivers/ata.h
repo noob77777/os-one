@@ -134,6 +134,13 @@ public:
         return 0;
     }
 
+    /*
+     *
+     * DEBUG: uint8_t ATA::flush();
+     * Doesn't work. Further insight needed.
+     * 
+     */
+
     uint8_t flush()
     {
         device_port.write(master ? 0xE0 : 0xF0);
@@ -148,6 +155,10 @@ public:
 
         if (status & 0x01)
             return 2;
+
+        int ptr = 0;
+        for (int i = 0; i < 1024 * 1024 * 8; i++)
+            ptr++;
 
         return 0;
     }

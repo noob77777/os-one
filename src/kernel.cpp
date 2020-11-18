@@ -5,7 +5,7 @@
 #include <drivers/display.h>
 #include <drivers/keyboard_driver.h>
 #include <drivers/ata.h>
-#include <filesystem/fat.h>
+#include <filesystem/filesystem.h>
 #include <sys/program.h>
 #include <sys/terminal.h>
 
@@ -35,18 +35,16 @@ extern "C" void kernel_main(uint32_t arg)
 
     ATA::ata_check();
     ATA ataDisk(true, 0x01F0);
-    FAT fs(&ataDisk);
+    FileSystem fs(&ataDisk);
     fs.init();
-
-    // fs tests
     for (int i = 0; i < 128; i++) {
-        uint32_t cluster = 0;
-        kprintf_hex(cluster = fs.allocate());
-        char write[4096] = "Test Data\n";
-        fs.write_cluster(cluster, (uint8_t *)write, 4096);
-        char test[4096];
-        for(int i = 0; i < 4096; i++) test[i] = 0;
-        fs.read_cluster(cluster, (uint8_t *)test, 4096);
+        uint8_t fd = 0;
+        kprintf_hex(fd = fs.allocate());
+        char write[512] = "Test-Data\n";
+        kprintf_hex(fs.write(fd, (uint8_t *)write, 512));
+        char test[512];
+        for(int i = 0; i < 512; i++) test[i] = 0;
+        kprintf_hex(fs.read(fd, (uint8_t *)test, 512));
         kprintf(test);
     }
 
