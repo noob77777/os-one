@@ -76,6 +76,8 @@ public:
     {
         if (sector_num > 0x0FFFFFFF)
             return 1;
+        if (count > 512)
+            return 2;
 
         device_port.write((master ? 0xE0 : 0xF0) | ((sector_num & 0x0F000000) >> 24));
         error_port.write(0);
@@ -87,13 +89,13 @@ public:
 
         uint8_t status = command_port.read();
         if (status == 0x00)
-            return 2;
+            return 3;
 
         while (((status & 0x80) == 0x80) && ((status & 0x01) != 0x01))
             status = command_port.read();
 
         if (status & 0x01)
-            return 3;
+            return 4;
 
         for (int i = 0; i < count; i += 2)
         {
@@ -146,13 +148,6 @@ public:
 
         return 0;
     }
-
-    /*
-     *
-     * DEBUG: uint8_t ATA::flush();
-     * Doesn't work. Further insight needed.
-     * 
-     */
 
     uint8_t flush()
     {
