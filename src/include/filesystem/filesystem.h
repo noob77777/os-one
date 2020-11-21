@@ -16,7 +16,6 @@ class FileSystem
     static const int SECTOR_SIZE = 512;
     static const int ERROR = 0xFF;
 
-public:
     ATA *ata0m;
     uint8_t dir_fd;
 
