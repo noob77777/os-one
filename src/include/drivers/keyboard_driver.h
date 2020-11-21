@@ -10,6 +10,11 @@ namespace keyboard_driver
 {
     void default_handler(char chr)
     {
+        if (chr == '\b')
+        {
+            display::backspace();
+            return;
+        }
         const char string[2] = {chr, '\0'};
         kprintf(string);
     }
@@ -113,7 +118,7 @@ public:
                 keypress(shift ? '+' : '=');
                 break;
             case 0x0E:
-                display::backspace();
+                keypress('\b');
                 break;
             case 0x0F:
                 keypress('\t');
@@ -238,7 +243,6 @@ public:
                 break;
 
             default:
-                kprintf_hex8(key);
                 break;
             }
         }

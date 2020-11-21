@@ -8,25 +8,62 @@
 
 namespace terminal
 {
+    ProgramManager *program_manager = nullptr;
+
     void keyboard_handler(char chr)
     {
-        const char string[2] = {chr, '\0'};
-        kprintf(string);
-        if (chr == '\n')
+        static char terminal_buffer[80] = "";
+        static int idx = 0;
+        if (chr == '\b')
         {
+            if (idx > 0)
+            {
+                idx--;
+                terminal_buffer[idx] = 0;
+                display::backspace();
+            }
+        }
+        else if (chr == '\n')
+        {
+            kprintf("\n");
+            if (strlen(terminal_buffer) != 0)
+            {
+
+                Program *ps = program_manager->program(terminal_buffer);
+                if (ps == nullptr)
+                {
+                    kprintf(terminal_buffer);
+                    kprintf(": command not found\n");
+                }
+                else
+                {
+                    ps->run(0, nullptr, nullptr);
+                }
+            }
             kprintf("root@host: ");
+            idx = 0;
+            terminal_buffer[idx] = 0;
+        }
+        else
+        {
+            const char string[2] = {chr, '\0'};
+            kprintf(string);
+            terminal_buffer[idx++] = chr;
+            idx = idx % 80;
+            terminal_buffer[idx] = '\0';
         }
     }
 } // namespace terminal
 
 class Terminal : public Program
 {
-    ProgramManager *program_manager;
+    KeyboardDriver *keyboard;
 
 public:
-    Terminal(ProgramManager *program_manager, KeyboardDriver *keyboard) : Program(keyboard)
+    Terminal(ProgramManager *program_manager, KeyboardDriver *keyboard) : Program("terminal")
     {
-        this->program_manager = program_manager;
+        this->keyboard = keyboard;
+        terminal::program_manager = program_manager;
         keyboard->on_key_press(terminal::keyboard_handler);
     }
 
