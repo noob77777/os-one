@@ -34,9 +34,8 @@ extern "C" void kernel_main(uint32_t arg)
     kprintf("OS-ONE (version 0.0.1-target=i386)\n");
 
     ATA::ata_check();
-    ATA ataDisk(true, 0x01F0);
-    FileSystem fs(&ataDisk);
-    fs.init();
+    ATA ata0m(true, 0x01F0);
+    FileSystem fs(&ata0m);
 
     kprintf("\n");
     ProgramManager program_manager;
