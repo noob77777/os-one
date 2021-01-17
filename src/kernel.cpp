@@ -9,6 +9,7 @@
 #include <sys/program.h>
 #include <sys/terminal.h>
 #include <sys/hello.h>
+#include <memory/malloc.h>
 
 typedef void (*constructor)();
 extern "C" constructor start_ctors;
@@ -38,8 +39,10 @@ extern "C" void kernel_main(uint32_t arg)
     ATA ata0m(true, 0x01F0);
     FileSystem fs(&ata0m);
 
+    MemoryManager::init();
+
     kprintf("\n");
-    ProgramManager program_manager;    
+    ProgramManager program_manager;
     Terminal terminal(&program_manager, &keyboard);
     program_manager.add_program(&terminal);
     Hello hello;

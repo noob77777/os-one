@@ -29,6 +29,7 @@ SECTIONS
   .bss ALIGN(0x1000) : AT(ADDR(.bss) - VIRTUAL_BASE)
   {
     *(.bss)
+    kernel_heap_start = .;
   }
 
   /DISCARD/ : { *(.fini_array*) *(.comment) }

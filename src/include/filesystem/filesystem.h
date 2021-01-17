@@ -86,7 +86,7 @@ class FileSystem
             return ERROR;
         uint8_t status = set_next_cluster(fd, nfree);
         if (status == ERROR)
-            return status;
+            return ERROR;
         status = set_next_cluster(0, fd);
         if (status == ERROR)
             return ERROR;
