@@ -21,7 +21,7 @@ public:
     virtual int run(int argc, char *const argv[], char *const env[])
     {
         Directory dir;
-        uint8_t status = fs->read(fs->dir_fd, (uint8_t *)&dir);
+        uint8_t status = fs->read(fs->dir_fd, (uint8_t *)&dir, sizeof(dir));
         if (status)
             return 1;
 
@@ -31,8 +31,6 @@ public:
             if (!(strcmp(test.name(), "")))
             {
                 kprintf(test.name());
-                kprintf(" ");   // DEBUG
-                kprintf_hex(i); // DEBUG
                 kprintf("\n");
             }
         }

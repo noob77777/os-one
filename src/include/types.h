@@ -8,4 +8,7 @@ typedef unsigned long long uint64_t;
 
 typedef unsigned size_t;
 
+#define min(a, b) (((a) < (b)) ? (a) : (b))
+#define max(a, b) (((a) > (b)) ? (a) : (b))
+
 #endif
