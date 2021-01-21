@@ -6,10 +6,13 @@
 #include <drivers/keyboard_driver.h>
 #include <drivers/ata.h>
 #include <filesystem/filesystem.h>
+#include <memory/malloc.h>
 #include <sys/program.h>
 #include <sys/terminal.h>
 #include <sys/hello.h>
-#include <memory/malloc.h>
+#include <sys/ls.h>
+#include <sys/touch.h>
+#include <sys/rm.h>
 
 typedef void (*constructor)();
 extern "C" constructor start_ctors;
@@ -47,6 +50,12 @@ extern "C" void kernel_main(uint32_t arg)
     program_manager.add_program(&terminal);
     Hello hello;
     program_manager.add_program(&hello);
+    LS ls(&fs);
+    program_manager.add_program(&ls);
+    Touch touch(&fs);
+    program_manager.add_program(&touch);
+    RM rm(&fs);
+    program_manager.add_program(&rm);
     program_manager.start();
 
     for (;;)

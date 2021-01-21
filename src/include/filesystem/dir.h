@@ -21,13 +21,16 @@ public:
     {
         return file_name;
     }
-    
+
     friend class Directory;
 } __attribute__((packed));
 
 class Directory
 {
+public:
     const static int DIRECTORY_SIZE = 128;
+
+private:
     DirectoryEntry dir[DIRECTORY_SIZE];
 
 public:

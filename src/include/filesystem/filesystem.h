@@ -14,11 +14,17 @@ class FileSystem
     static const int FS_SIZE = 256;       // 1 MiB
     static const int CLUSTER_SIZE = 4096; // 4 KiB
     static const int SECTOR_SIZE = 512;
+
+public:
     static const int ERROR = 0xFF;
 
+private:
     ATA *ata0m;
+
+public:
     uint8_t dir_fd;
 
+private:
     uint32_t get_lba(uint8_t fd)
     {
         return BASE + ((CLUSTER_SIZE / SECTOR_SIZE) * fd);
@@ -200,6 +206,7 @@ public:
             DirectoryEntry file(file_name, fd);
             dir.add(file);
             uint8_t status = write(dir_fd, (uint8_t *)&dir);
+
             if (status)
                 return ERROR;
         }

@@ -2,6 +2,7 @@
 #define __STRING_H
 
 #include <types.h>
+#include <memory/malloc.h>
 
 uint32_t strlen(const char *s)
 {
@@ -30,4 +31,36 @@ void strcpy(char *dest, const char *source)
     }
 }
 
+char **strtoken(const char *s, char delimeter, int *num)
+{
+    int n = 0;
+    if (strlen(s))
+        n++;
+    for (int i = 1; i < strlen(s); i++)
+    {
+        if (s[i] == delimeter && s[i - 1] != delimeter)
+            n++;
+    }
+    *num = n;
+    char **res = new char *[n];
+    int ptr = 0;
+    for (int i = 0; i < n; i++)
+    {
+        while (s[ptr] == delimeter)
+            ptr++;
+
+        int delta = 0;
+        for (int j = ptr; (s[j] != delimeter && s[j] != 0); j++)
+            delta = j - ptr + 1;
+        
+        res[i] = new char[delta];
+        int lc = 0;
+        for (int j = ptr; (s[j] != delimeter && s[j] != 0); j++)
+            res[i][lc++] = s[j];
+        res[i][lc] = 0;
+
+        ptr += lc;
+    }
+    return res;
+}
 #endif

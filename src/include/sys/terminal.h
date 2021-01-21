@@ -5,6 +5,7 @@
 #include <sys/program.h>
 #include <drivers/keyboard_driver.h>
 #include <drivers/display.h>
+#include <memory/malloc.h>
 
 namespace terminal
 {
@@ -28,17 +29,25 @@ namespace terminal
             kprintf("\n");
             if (strlen(terminal_buffer) != 0)
             {
+                int num_tokens = 0;
+                char **tokens = strtoken(terminal_buffer, ' ', &num_tokens);
 
-                Program *ps = program_manager->program(terminal_buffer);
+                Program *ps = program_manager->program(tokens[0]);
                 if (ps == nullptr)
                 {
-                    kprintf(terminal_buffer);
+                    kprintf(tokens[0]);
                     kprintf(": command not found\n");
                 }
                 else
                 {
-                    ps->run(0, nullptr, nullptr);
+                    ps->run(num_tokens, tokens, nullptr);
                 }
+
+                for (int i = 0; i < num_tokens; i++)
+                {
+                    MemoryManager::free(tokens[i]);
+                }
+                MemoryManager::free(tokens);
             }
             kprintf("root@host: ");
             idx = 0;
