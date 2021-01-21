@@ -14,11 +14,17 @@ class FileSystem
     static const int FS_SIZE = 256;       // 1 MiB
     static const int CLUSTER_SIZE = 4096; // 4 KiB
     static const int SECTOR_SIZE = 512;
+
+public:
     static const int ERROR = 0xFF;
 
+private:
     ATA *ata0m;
+
+public:
     uint8_t dir_fd;
 
+private:
     uint32_t get_lba(uint8_t fd)
     {
         return BASE + ((CLUSTER_SIZE / SECTOR_SIZE) * fd);
@@ -146,35 +152,37 @@ public:
 
         uint8_t fd = allocate();
         Directory dir = Directory();
-        status = write(fd, (uint8_t *)&dir);
+        status = write(fd, (uint8_t *)&dir, sizeof(dir));
 
         return status;
     }
 
-    uint8_t read(uint8_t fd, uint8_t *data)
+    uint8_t read(uint8_t fd, uint8_t *data, int n)
     {
         if (!allocated(fd))
             return ERROR;
 
         uint32_t lba = get_lba(fd);
-        for (int i = 0; i < CLUSTER_SIZE; i += SECTOR_SIZE)
+        for (int i = 0; i < n; i += SECTOR_SIZE)
         {
-            uint8_t status = ata0m->read(lba, &data[i], SECTOR_SIZE);
+            uint8_t status = ata0m->read(lba, &data[i], min(SECTOR_SIZE, n - i));
+            lba++;
             if (status)
                 return ERROR;
         }
         return 0;
     }
 
-    uint8_t write(uint8_t fd, uint8_t *data)
+    uint8_t write(uint8_t fd, uint8_t *data, int n)
     {
         if (!allocated(fd))
             return ERROR;
 
         uint32_t lba = get_lba(fd);
-        for (int i = 0; i < CLUSTER_SIZE; i += SECTOR_SIZE)
+        for (int i = 0; i < n; i += SECTOR_SIZE)
         {
-            uint8_t status = ata0m->write(lba, data, SECTOR_SIZE);
+            uint8_t status = ata0m->write(lba, &data[i], min(SECTOR_SIZE, n - i));
+            lba++;
             if (status)
                 return ERROR;
             status = ata0m->flush();
@@ -188,7 +196,7 @@ public:
     uint8_t open(const char *file_name)
     {
         Directory dir;
-        uint8_t status = read(dir_fd, (uint8_t *)&dir);
+        uint8_t status = read(dir_fd, (uint8_t *)&dir, sizeof(dir));
         if (status)
             return ERROR;
         uint8_t fd = dir.fd(file_name);
@@ -199,7 +207,8 @@ public:
                 return ERROR;
             DirectoryEntry file(file_name, fd);
             dir.add(file);
-            uint8_t status = write(dir_fd, (uint8_t *)&dir);
+            uint8_t status = write(dir_fd, (uint8_t *)&dir, sizeof(dir));
+
             if (status)
                 return ERROR;
         }
@@ -209,11 +218,11 @@ public:
     uint8_t unlink(uint8_t fd)
     {
         Directory dir;
-        uint8_t status = read(dir_fd, (uint8_t *)&dir);
+        uint8_t status = read(dir_fd, (uint8_t *)&dir, sizeof(dir));
         if (status)
             return ERROR;
         dir.remove(fd);
-        status = write(dir_fd, (uint8_t *)&dir);
+        status = write(dir_fd, (uint8_t *)&dir, sizeof(dir));
         if (status)
             return ERROR;
         return free(fd);

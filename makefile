@@ -37,6 +37,7 @@ kernel.iso: kernel.bin
 	echo ''                                  >> iso/boot/grub/grub.cfg
 	grub-mkrescue --output=kernel.iso iso
 	rm -rf iso
+	rm src/tmp/* -f
 	mv kernel.iso prod/kernel.iso
 
 run: kernel.iso
