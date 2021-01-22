@@ -2,25 +2,35 @@
 # sudo apt-get install g++ binutils libc6-dev-i386
 # sudo apt-get install xorriso
 
-GCCPARAMS = -m32 -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -I src/include
+GCCPARAMS = -m32 -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -I include
 ASPARAMS = --32
 LDPARAMS = -melf_i386
+SRC = src
+BUILD = build
+TMP = tmp
 
-objects = src/loader.o src/interrupt_stubs.o src/kernel.o src/virtual_memory.o
+build_directories = $(BUILD) $(BUILD)/drivers $(BUILD)/filesystem $(BUILD)/hardware $(BUILD)/lib $(BUILD)/memory $(BUILD)/sys
+kernel_main = $(BUILD)/kernel.o
+as_objects = $(BUILD)/loader.o $(BUILD)/interrupt_stubs.o $(BUILD)/virtual_memory_switch.o
+cpp_objects = $(patsubst $(SRC)/%.cpp, $(BUILD)/%.o, $(wildcard $(SRC)/*/*.cpp))
 
+setup_build:
+	mkdir $(build_directories)
 
-src/tmp/%.s: src/%.cpp
+$(TMP)%.s: %.cpp
 	g++ $(GCCPARAMS) -S -o $@ $<
 
-src/%.o: src/%.cpp
+$(kernel_main): kernel.cpp
 	g++ $(GCCPARAMS) -c -o $@ $<
 
-src/%.o: src/%.s
+$(BUILD)/%.o: $(SRC)/%.cpp
+	g++ $(GCCPARAMS) -c -o $@ $<
+
+$(BUILD)/%.o: %.s
 	as $(ASPARAMS) -o $@ $<
 
-kernel.bin: src/linker.ld $(objects)
-	ld $(LDPARAMS) -T $< -o $@ $(objects)
-	rm $(objects)
+kernel.bin: linker.ld $(as_objects) $(cpp_objects) $(kernel_main)
+	ld $(LDPARAMS) -T $< -o $@ $(as_objects) $(cpp_objects) $(kernel_main)
 
 kernel.iso: kernel.bin
 	mkdir iso
@@ -36,9 +46,13 @@ kernel.iso: kernel.bin
 	echo '}'                                 >> iso/boot/grub/grub.cfg
 	echo ''                                  >> iso/boot/grub/grub.cfg
 	grub-mkrescue --output=kernel.iso iso
-	rm -rf iso
-	rm src/tmp/* -f
 	mv kernel.iso prod/kernel.iso
+	rm -rf iso
+	rm kernel.bin
 
 run: kernel.iso
 	qemu-system-i386 prod/kernel.iso
+
+clean:
+	rm -rf -f build
+	make setup_build
