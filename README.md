@@ -17,7 +17,7 @@ An operating system targeted for i386 machines. <br />
 Works with legacy BIOS settings and PS2 keyboards on real systems.
 
 ### To build from source <br />
-1. make clean (first build only)
+1. make setup_build (first build only)
 2. make kernel.iso
 
 # :)

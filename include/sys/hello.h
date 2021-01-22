@@ -9,16 +9,9 @@
 class Hello : public Program
 {
 public:
-    Hello() : Program("hello")
-    {
-        ;
-    }
+    Hello();
 
-    virtual int run(int argc, char *const argv[], char *const env[])
-    {
-        kprintf("Hello!!!\n");
-        return 0;
-    }
+    virtual int main(int argc, char *const argv[], char *const env[]);
 };
 
 #endif

@@ -37,6 +37,13 @@ char **strtoken(const char *s, char delimeter, int *num)
         if (s[i] == delimeter && s[i - 1] != delimeter)
             n++;
     }
+
+    if (s[strlen(s) - 1] == ' ' && n >= 1)
+        n--;
+
+    if (n == 0)
+        return nullptr;
+
     *num = n;
     char **res = new char *[n];
     int ptr = 0;
@@ -57,5 +64,6 @@ char **strtoken(const char *s, char delimeter, int *num)
 
         ptr += lc;
     }
+
     return res;
 }
