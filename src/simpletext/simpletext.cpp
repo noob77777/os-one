@@ -33,6 +33,9 @@ namespace simpletext
         }
     }
 
+    /*
+     * Function not completed
+     */
     void render()
     {
         // state_ptr is always not null if render is called
@@ -73,6 +76,9 @@ namespace simpletext
         display::clear();
     }
 
+    /*
+     * Function not completed
+     */
     void keyboard_handler(char chr)
     {
         if (chr == '\a')
@@ -82,7 +88,7 @@ namespace simpletext
         }
         else
         {
-            
+            // change state
             render();
         }
     }
