@@ -11,6 +11,11 @@ namespace keyboard_driver
     void default_handler(char chr);
 } // namespace keyboard_driver
 
+#define LEFT 1
+#define RIGHT 2
+#define UP 3
+#define DOWN 4
+
 class KeyboardDriver : public DriverInterface
 {
     Port8bit data_port;

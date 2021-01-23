@@ -88,6 +88,7 @@ void MemoryManager::free(void *ptr)
         return;
     }
 }
+
 void MemoryManager::status()
 {
     kprintf("USAGE_SM: ");
@@ -114,7 +115,13 @@ void operator delete(void *ptr)
 {
     MemoryManager::free(ptr);
 }
+
 void operator delete[](void *ptr)
+{
+    MemoryManager::free(ptr);
+}
+
+void operator delete(void *ptr, size_t size)
 {
     MemoryManager::free(ptr);
 }

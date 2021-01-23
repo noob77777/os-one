@@ -11,6 +11,7 @@
 #include <sys/terminal.h>
 #include <sys/hello.h>
 #include <sys/system_software.h>
+#include <simpletext/simpletext.h>
 
 void os_one()
 {
@@ -67,6 +68,8 @@ extern "C" void kernel_main(uint32_t arg)
     program_manager.add_program(&fdisk);
     Clear clear;
     program_manager.add_program(&clear);
+    SimpleText simpletext(&fs, &keyboard);
+    program_manager.add_program(&simpletext);
     program_manager.start();
 
     for (;;)

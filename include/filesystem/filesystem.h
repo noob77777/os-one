@@ -11,8 +11,12 @@ class FileSystem
 {
     static const int FAT_BASE = 0x10;
     static const int BASE = 0x500;
-    static const int FS_SIZE = 256;       // 1 MiB
+    static const int FS_SIZE = 256; // 1 MiB
+
+public:
     static const int CLUSTER_SIZE = 4096; // 4 KiB
+
+private:
     static const int SECTOR_SIZE = 512;
 
 public:

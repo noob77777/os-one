@@ -3,6 +3,9 @@
 namespace terminal
 {
     ProgramManager *program_manager = nullptr;
+    Program *ps = nullptr;
+    char **tokens = nullptr;
+    int num_tokens = 0;
 
     void keyboard_handler(char chr)
     {
@@ -17,38 +20,29 @@ namespace terminal
                 display::backspace();
             }
         }
+        else if (chr == UP || chr == DOWN || chr == RIGHT || chr == LEFT)
+        {
+            ;
+        }
         else if (chr == '\n')
         {
             kprintf("\n");
             if (strlen(terminal_buffer) != 0)
             {
-                int num_tokens = 0;
-                char **tokens = strtoken(terminal_buffer, ' ', &num_tokens);
+                num_tokens = 0;
+                tokens = strtoken(terminal_buffer, ' ', &num_tokens);
 
-                Program *ps = (tokens != nullptr) ? program_manager->program(tokens[0]) : nullptr;
+                ps = (tokens != nullptr) ? program_manager->program(tokens[0]) : nullptr;
+
                 if (ps == nullptr)
                 {
                     if (tokens)
                     {
-                        kprintf(tokens[0]);
+                        kprintf(terminal::tokens[0]);
                         kprintf(": command not found\n");
                     }
                 }
-                else
-                {
-                    ps->main(num_tokens, tokens, nullptr);
-                }
-
-                if (tokens != nullptr)
-                {
-                    for (int i = 0; i < num_tokens; i++)
-                    {
-                        MemoryManager::free(tokens[i]);
-                    }
-                    MemoryManager::free(tokens);
-                }
             }
-            kprintf("root@host: ");
             idx = 0;
             terminal_buffer[idx] = 0;
         }
@@ -80,7 +74,26 @@ int Terminal::main(int argc, char *const argv[], char *const env[])
         {
             kprintf("\n^C\n");
             keyboard->reset();
+            keyboard->SIGINT = 0;
             break;
+        }
+
+        if (terminal::ps != nullptr)
+        {
+
+            terminal::ps->main(terminal::num_tokens, terminal::tokens, nullptr);
+            terminal::ps = nullptr;
+
+            if (terminal::tokens != nullptr)
+            {
+                for (int i = 0; i < terminal::num_tokens; i++)
+                {
+                    MemoryManager::free(terminal::tokens[i]);
+                }
+                MemoryManager::free(terminal::tokens);
+            }
+
+            kprintf("root@host: ");
         }
     }
 

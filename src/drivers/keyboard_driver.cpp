@@ -152,7 +152,14 @@ uint32_t KeyboardDriver::handle_interrupt(uint32_t esp)
             keypress(shift ? 'A' : 'a');
             break;
         case 0x1F:
-            keypress(shift ? 'S' : 's');
+            if (ctrl)
+            {
+                keypress('\a'); // ctrl + s => special alert
+            }
+            else
+            {
+                keypress(shift ? 'S' : 's');
+            }
             break;
         case 0x20:
             keypress(shift ? 'D' : 'd');
@@ -223,6 +230,19 @@ uint32_t KeyboardDriver::handle_interrupt(uint32_t esp)
             break;
         case 0x39:
             keypress(' ');
+            break;
+
+        case 0x4B:
+            keypress(LEFT);
+            break;
+        case 0x4D:
+            keypress(RIGHT);
+            break;
+        case 0x48:
+            keypress(UP);
+            break;
+        case 0x50:
+            keypress(DOWN);
             break;
 
         default:
