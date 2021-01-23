@@ -38,6 +38,16 @@ public:
     virtual int main(int argc, char *const argv[], char *const env[]);
 };
 
+class FDisk : public Program
+{
+    FileSystem *fs;
+
+public:
+    FDisk(FileSystem *fs);
+
+    virtual int main(int argc, char *const argv[], char *const env[]);
+};
+
 class Clear : public Program
 {
 public:

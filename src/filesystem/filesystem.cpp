@@ -136,6 +136,9 @@ uint8_t FileSystem::read(uint8_t fd, uint8_t *data, int n)
     if (!allocated(fd))
         return ERROR;
 
+    if (n > CLUSTER_SIZE)
+        return ERROR;
+
     uint32_t lba = get_lba(fd);
     for (int i = 0; i < n; i += SECTOR_SIZE)
     {
@@ -150,6 +153,9 @@ uint8_t FileSystem::read(uint8_t fd, uint8_t *data, int n)
 uint8_t FileSystem::write(uint8_t fd, uint8_t *data, int n)
 {
     if (!allocated(fd))
+        return ERROR;
+
+    if (n > CLUSTER_SIZE)
         return ERROR;
 
     uint32_t lba = get_lba(fd);
@@ -179,6 +185,14 @@ uint8_t FileSystem::open(const char *file_name)
         fd = allocate();
         if (fd == ERROR)
             return ERROR;
+
+        char empty[CLUSTER_SIZE];
+        for (int i = 0; i < CLUSTER_SIZE; i++)
+            empty[i] = 0;
+        
+        if (write(fd, (uint8_t *)empty, CLUSTER_SIZE))
+            return ERROR;
+
         DirectoryEntry file(file_name, fd);
         dir.add(file);
         uint8_t status = write(dir_fd, (uint8_t *)&dir, sizeof(dir));

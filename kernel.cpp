@@ -63,6 +63,8 @@ extern "C" void kernel_main(uint32_t arg)
     program_manager.add_program(&touch);
     RM rm(&fs);
     program_manager.add_program(&rm);
+    FDisk fdisk(&fs);
+    program_manager.add_program(&fdisk);
     Clear clear;
     program_manager.add_program(&clear);
     program_manager.start();
