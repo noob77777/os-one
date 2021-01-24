@@ -4,6 +4,7 @@ namespace simpletext
 {
     static editor_state *state_ = nullptr;
     static FileSystem *fs_ = nullptr;
+    const uint8_t THEME = 0xF5;
 
     void render_msg(const char *msg)
     {
@@ -13,11 +14,13 @@ namespace simpletext
         for (int i = 0; i < WIDTH; ++i)
         {
             VIDEO_MEMORY[2 * (WIDTH * y + i)] = ' ';
+            VIDEO_MEMORY[2 * (WIDTH * y + i) + 1] = THEME;
         }
 
         for (int i = 0; state_->filename[i] != '\0'; ++i)
         {
             VIDEO_MEMORY[2 * (WIDTH * y + x)] = state_->filename[i];
+            VIDEO_MEMORY[2 * (WIDTH * y + x) + 1] = THEME;
             x++;
         }
 
@@ -29,16 +32,95 @@ namespace simpletext
         for (int i = 0; msg[i] != '\0'; ++i)
         {
             VIDEO_MEMORY[2 * (WIDTH * y + x)] = msg[i];
+            VIDEO_MEMORY[2 * (WIDTH * y + x) + 1] = THEME;
+            x++;
+        }
+    }
+
+    void render_header()
+    {
+        int x = 32;
+        int y = 0;
+
+        for (int i = 0; i < WIDTH; ++i)
+        {
+            VIDEO_MEMORY[2 * (WIDTH * y + i)] = ' ';
+            VIDEO_MEMORY[2 * (WIDTH * y + i) + 1] = THEME;
+        }
+
+        const char *str = "SimpleText v1.0";
+
+        for (int i = 0; str[i] != '\0'; ++i)
+        {
+            VIDEO_MEMORY[2 * (WIDTH * y + x)] = str[i];
+            VIDEO_MEMORY[2 * (WIDTH * y + x) + 1] = THEME;
             x++;
         }
     }
 
     /*
-     * Function not completed
+     * Optimization required
      */
     void render()
     {
         // state_ptr is always not null if render is called
+        display::clear();
+
+        render_header();
+
+        int number_of_lines = 0;
+        int idx = 0;
+        uint8_t flag = 0;
+        for (int i = 0; state_->buffer[i] != '\0'; i++)
+        {
+            if (flag == 0 && number_of_lines == state_->line)
+            {
+                flag = 1;
+                idx = i;
+            }
+            if (state_->buffer[i] == '\n')
+            {
+                number_of_lines++;
+            }
+        }
+
+        int x = 0;
+        int y = 1;
+        for (int i = idx; state_->buffer[i] != '\0'; ++i)
+        {
+            if (i == state_->cursor_idx)
+            {
+                VIDEO_MEMORY[2 * (WIDTH * y + x)] = '_';
+                x++;
+            }
+
+            switch (state_->buffer[i])
+            {
+            case '\n':
+                x = 0;
+                y++;
+                break;
+            case '\t':
+                x += 4;
+                break;
+            default:
+                VIDEO_MEMORY[2 * (WIDTH * y + x)] = state_->buffer[i];
+                x++;
+                break;
+            }
+
+            if (x >= SimpleText::WINDOW_WIDTH)
+            {
+                x = 0;
+                y++;
+            }
+
+            if (y >= SimpleText::WINDOW_HEIGHT)
+            {
+                break;
+            }
+        }
+
         render_msg("editing");
     }
 
@@ -46,6 +128,8 @@ namespace simpletext
     {
         display::clear();
         state->fd = fd;
+        state->cursor_idx = 0;
+        state->line = 0;
         state->buffer = new char[FileSystem::CLUSTER_SIZE];
         if (state->buffer == nullptr)
         {
@@ -77,7 +161,7 @@ namespace simpletext
     }
 
     /*
-     * Function not completed
+     * Function not optimized
      */
     void keyboard_handler(char chr)
     {
@@ -88,7 +172,108 @@ namespace simpletext
         }
         else
         {
-            // change state
+            if (chr == UP)
+            {
+                int number_of_lines = 0;
+                int current_line_number = 0;
+                int prev_end = 0;
+                for (int i = 0; state_->buffer[i] != '\0'; i++)
+                {
+                    if (i == state_->cursor_idx)
+                    {
+                        current_line_number = number_of_lines;
+                        state_->cursor_idx = prev_end;
+                        if (current_line_number > 0)
+                        {
+                            current_line_number--;
+                            if (current_line_number < state_->line)
+                            {
+                                state_->line--;
+                            }
+                        }
+                        break;
+                    }
+                    if (state_->buffer[i] == '\n')
+                    {
+                        prev_end = i;
+                        number_of_lines++;
+                    }
+                }
+            }
+            else if (chr == DOWN)
+            {
+                int number_of_lines = 0;
+                int current_line_number = 0xFF;
+                int prev_end = 0;
+                for (int i = 0; state_->buffer[i] != '\0'; i++)
+                {
+                    if (i == state_->cursor_idx)
+                    {
+                        current_line_number = number_of_lines;
+                    }
+                    if (state_->buffer[i] == '\n')
+                    {
+                        if (number_of_lines == current_line_number + 1)
+                        {
+                            state_->cursor_idx = i;
+                            if (number_of_lines - state_->line + 1 >= SimpleText::WINDOW_HEIGHT)
+                            {
+                                state_->line++;
+                            }
+                            break;
+                        }
+                        number_of_lines++;
+                    }
+                }
+            }
+            else if (chr == RIGHT)
+            {
+                if (state_->buffer[state_->cursor_idx] != '\0')
+                {
+                    state_->cursor_idx++;
+                }
+            }
+            else if (chr == LEFT)
+            {
+                if (state_->cursor_idx != 0)
+                {
+                    state_->cursor_idx--;
+                }
+            }
+            else if (chr == '\b')
+            {
+                if (state_->cursor_idx != 0)
+                {
+                    int eof = 0;
+                    for (int i = state_->cursor_idx; state_->buffer[i] != '\0'; i++)
+                        eof = i;
+                    for (int i = state_->cursor_idx - 1; state_->buffer[i] != '\0'; i++)
+                        state_->buffer[i] = state_->buffer[i + 1];
+                    state_->buffer[eof] = '\0';
+                    state_->cursor_idx--;
+                }
+            }
+            else
+            {
+                if (state_->buffer[state_->cursor_idx] == '\0')
+                {
+                    state_->buffer[state_->cursor_idx++] = chr;
+                    state_->buffer[state_->cursor_idx] = '\0';
+                }
+                else
+                {
+                    int eof = 0;
+                    for (int i = state_->cursor_idx; state_->buffer[i] != '\0'; i++)
+                    {
+                        eof = i + 1;
+                    }
+                    for (int i = eof; i >= state_->cursor_idx; i--)
+                    {
+                        state_->buffer[i + 1] = state_->buffer[i];
+                    }
+                    state_->buffer[state_->cursor_idx++] = chr;
+                }
+            }
             render();
         }
     }

@@ -189,6 +189,7 @@ uint8_t FileSystem::open(const char *file_name)
         char empty[CLUSTER_SIZE];
         for (int i = 0; i < CLUSTER_SIZE; i++)
             empty[i] = 0;
+        empty[0] = '\n';
         
         if (write(fd, (uint8_t *)empty, CLUSTER_SIZE))
             return ERROR;
