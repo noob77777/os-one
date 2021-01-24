@@ -6,7 +6,7 @@ namespace display
     {
         for (y_coordinate = 0; y_coordinate < HEIGHT; y_coordinate++)
             for (x_coordinate = 0; x_coordinate < WIDTH; x_coordinate++)
-                VIDEO_MEMORY[2 * (WIDTH * y_coordinate + x_coordinate)] = ' ', VIDEO_MEMORY[2 * (WIDTH * y_coordinate + x_coordinate) + 1] = 0x0F;
+                VIDEO_MEMORY[2 * (WIDTH * y_coordinate + x_coordinate)] = ' ', VIDEO_MEMORY[2 * (WIDTH * y_coordinate + x_coordinate) + 1] = 0x07;
         x_coordinate = 0;
         y_coordinate = 0;
     }

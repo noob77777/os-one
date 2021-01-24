@@ -4,7 +4,7 @@ namespace simpletext
 {
     static editor_state *state_ = nullptr;
     static FileSystem *fs_ = nullptr;
-    const uint8_t THEME = 0xF5;
+    const uint8_t THEME = 0x75;
 
     void render_msg(const char *msg)
     {

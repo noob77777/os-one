@@ -45,7 +45,8 @@ namespace terminal
             }
             idx = 0;
             terminal_buffer[idx] = 0;
-            kprintf("root@host: ");
+            if (ps == nullptr)
+                kprintf("root@host: ");
         }
         else
         {
