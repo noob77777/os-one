@@ -1,0 +1,98 @@
+#include <hardware/pci.h>
+
+PCIController::PCIController()
+    : data_port(0xCFC),
+      command_port(0xCF8)
+{
+    ;
+}
+
+uint32_t PCIController::read(uint16_t bus, uint16_t device, uint16_t function, uint32_t register_offset)
+{
+    uint32_t id =
+        0x1 << 31 | ((bus & 0xFF) << 16) | ((device & 0x1F) << 11) | ((function & 0x07) << 8) | (register_offset & 0xFC);
+    command_port.write(id);
+    uint32_t result = data_port.read();
+    return result >> (8 * (register_offset % 4));
+}
+
+void PCIController::write(uint16_t bus, uint16_t device, uint16_t function, uint32_t register_offset, uint32_t value)
+{
+    uint32_t id =
+        0x1 << 31 | ((bus & 0xFF) << 16) | ((device & 0x1F) << 11) | ((function & 0x07) << 8) | (register_offset & 0xFC);
+    command_port.write(id);
+    data_port.write(value);
+}
+
+bool PCIController::device_has_all_functions(uint16_t bus, uint16_t device)
+{
+    return read(bus, device, 0, 0x0E) & (1 << 7);
+}
+
+void PCIController::init()
+{
+    for (int bus = 0; bus < NUM_BUSES; bus++)
+    {
+        for (int device = 0; device < NUM_DEVICES; device++)
+        {
+            int N_FUNC = device_has_all_functions(bus, device) ? NUM_FUNCTIONS : 1;
+            for (int function = 0; function < N_FUNC; function++)
+            {
+                PCIDeviceDescriptor dev = get_device_descriptor(bus, device, function);
+
+                if (dev.vendor_id == 0x0000 || dev.vendor_id == 0xFFFF)
+                    continue;
+
+                kprintf("PCI BUS ");
+                kprintf_hex8(bus & 0xFF);
+
+                kprintf(", DEVICE ");
+                kprintf_hex8(device & 0xFF);
+
+                kprintf(", FUNCTION ");
+                kprintf_hex8(function & 0xFF);
+
+                kprintf(" = VENDOR ");
+                kprintf_hex8((dev.vendor_id & 0xFF00) >> 8);
+                kprintf_hex8(dev.vendor_id & 0xFF, false);
+
+                kprintf(", DEVICE ");
+                kprintf_hex8((dev.device_id & 0xFF00) >> 8);
+                kprintf_hex8(dev.device_id & 0xFF, false);
+                kprintf("\n");
+
+                if (dev.vendor_id == 0x1022 && dev.device_id == 0x2000)
+                {
+                    kprintf("amd_am79c973 found\n");
+                }
+            }
+        }
+    }
+}
+
+BaseAddressRegister PCIController::get_base_address_register(uint16_t bus, uint16_t device, uint16_t function, uint16_t bar)
+{
+    BaseAddressRegister result;
+    return result;
+}
+
+PCIDeviceDescriptor PCIController::get_device_descriptor(uint16_t bus, uint16_t device, uint16_t function)
+{
+    PCIDeviceDescriptor result;
+
+    result.bus = bus;
+    result.device = device;
+    result.function = function;
+
+    result.vendor_id = read(bus, device, function, 0x00);
+    result.device_id = read(bus, device, function, 0x02);
+
+    result.class_id = read(bus, device, function, 0x0b);
+    result.subclass_id = read(bus, device, function, 0x0a);
+    result.interface_id = read(bus, device, function, 0x09);
+
+    result.revision = read(bus, device, function, 0x08);
+    result.interrupt = read(bus, device, function, 0x3c);
+
+    return result;
+}

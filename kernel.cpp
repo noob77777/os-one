@@ -3,6 +3,7 @@
 #include <memory/virtual_memory.h>
 #include <memory/malloc.h>
 #include <hardware/interrupts.h>
+#include <hardware/pci.h>
 #include <drivers/display.h>
 #include <drivers/keyboard_driver.h>
 #include <drivers/ata.h>
@@ -33,6 +34,8 @@ GlobalDescriptorTable GDT;
 
 extern "C" void kernel_main(uint32_t arg)
 {
+    display::clear();
+    
     IdentityVirtualMemory vm = IdentityVirtualMemory();
     enable_virtual_memory(vm.cr3());
 
@@ -41,36 +44,39 @@ extern "C" void kernel_main(uint32_t arg)
     interruptManager.add_driver(&keyboard);
     interruptManager.activate();
 
-    display::clear();
-    kprintf("OS-ONE (version 0.0.1-target=i386)\n");
+    PCIController PCI;
+    PCI.init();
 
-    ATA ata0m(true, 0x01F0);
-    FileSystem fs(&ata0m);
+    // display::clear();
+    // kprintf("OS-ONE (version 0.0.1-target=i386)\n");
 
-    MemoryManager::init();
+    // ATA ata0m(true, 0x01F0);
+    // FileSystem fs(&ata0m);
 
-    kprintf("\n");
-    os_one();
-    kprintf("\n");
+    // MemoryManager::init();
 
-    ProgramManager program_manager;
-    Terminal terminal(&program_manager, &keyboard);
-    program_manager.add_program(&terminal);
-    Hello hello;
-    program_manager.add_program(&hello);
-    LS ls(&fs);
-    program_manager.add_program(&ls);
-    Touch touch(&fs);
-    program_manager.add_program(&touch);
-    RM rm(&fs);
-    program_manager.add_program(&rm);
-    FDisk fdisk(&fs);
-    program_manager.add_program(&fdisk);
-    Clear clear;
-    program_manager.add_program(&clear);
-    SimpleText simpletext(&fs, &keyboard);
-    program_manager.add_program(&simpletext);
-    program_manager.start();
+    // kprintf("\n");
+    // os_one();
+    // kprintf("\n");
+
+    // ProgramManager program_manager;
+    // Terminal terminal(&program_manager, &keyboard);
+    // program_manager.add_program(&terminal);
+    // Hello hello;
+    // program_manager.add_program(&hello);
+    // LS ls(&fs);
+    // program_manager.add_program(&ls);
+    // Touch touch(&fs);
+    // program_manager.add_program(&touch);
+    // RM rm(&fs);
+    // program_manager.add_program(&rm);
+    // FDisk fdisk(&fs);
+    // program_manager.add_program(&fdisk);
+    // Clear clear;
+    // program_manager.add_program(&clear);
+    // SimpleText simpletext(&fs, &keyboard);
+    // program_manager.add_program(&simpletext);
+    // program_manager.start();
 
     for (;;)
         ;
