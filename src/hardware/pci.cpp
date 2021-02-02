@@ -35,13 +35,19 @@ void PCIController::init()
     {
         for (int device = 0; device < NUM_DEVICES; device++)
         {
-            int N_FUNC = device_has_all_functions(bus, device) ? NUM_FUNCTIONS : 1;
-            for (int function = 0; function < N_FUNC; function++)
+            for (int function = 0; function < NUM_FUNCTIONS; function++)
             {
                 PCIDeviceDescriptor dev = get_device_descriptor(bus, device, function);
 
                 if (dev.vendor_id == 0x0000 || dev.vendor_id == 0xFFFF)
                     continue;
+
+                for (int bar_num = 0; bar_num < MAX_BAR; bar_num++)
+                {
+                    BaseAddressRegister bar = get_base_address_register(bus, device, function, bar_num);
+                    if (bar.address && (bar.type == INPUT_OUTPUT))
+                        dev.port_base = (uint32_t)bar.address;
+                }
 
                 kprintf("PCI BUS ");
                 kprintf_hex8(bus & 0xFF);
@@ -73,6 +79,24 @@ void PCIController::init()
 BaseAddressRegister PCIController::get_base_address_register(uint16_t bus, uint16_t device, uint16_t function, uint16_t bar)
 {
     BaseAddressRegister result;
+    uint32_t header_type = read(bus, device, function, 0x0E) & 0x7F;
+    int max_bar = 6 - (4 * header_type);
+    if (bar >= max_bar)
+        return result;
+
+    uint32_t bar_value = read(bus, device, function, 0x10 + 4 * bar);
+    result.type = (bar_value & 0x1) ? INPUT_OUTPUT : MEMORY_MAPPING;
+
+    if (result.type == MEMORY_MAPPING)
+    {
+        ;
+    }
+    else
+    {
+        result.address = (uint8_t *)(bar_value & ~0x3);
+        result.prefetchable = false;
+    }
+
     return result;
 }
 

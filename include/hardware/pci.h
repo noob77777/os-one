@@ -45,6 +45,7 @@ class PCIController
     static const int NUM_BUSES = 8;
     static const int NUM_DEVICES = 32;
     static const int NUM_FUNCTIONS = 8;
+    static const int MAX_BAR = 6;
 
 public:
     PCIController();
