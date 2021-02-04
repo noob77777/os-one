@@ -3,7 +3,9 @@
 
 #include <types.h>
 #include <hardware/port.h>
+#include <hardware/interrupts.h>
 #include <drivers/display.h>
+#include <drivers/driver_interface.h>
 
 enum BaseAddressRegisterType
 {
@@ -46,6 +48,7 @@ class PCIController
     static const int NUM_DEVICES = 32;
     static const int NUM_FUNCTIONS = 8;
     static const int MAX_BAR = 6;
+    static const int PCI_INT_BASE = 0x20;
 
 public:
     PCIController();
@@ -54,7 +57,7 @@ public:
     void write(uint16_t bus, uint16_t device, uint16_t function, uint32_t register_offset, uint32_t value);
     bool device_has_all_functions(uint16_t bus, uint16_t device);
 
-    void init();
+    void init(PCIDriverInterface **drivers, int num_drivers, InterruptManager *interrupt_manager);
     PCIDeviceDescriptor get_device_descriptor(uint16_t bus, uint16_t device, uint16_t function);
     BaseAddressRegister get_base_address_register(uint16_t bus, uint16_t device, uint16_t function, uint16_t bar);
 };

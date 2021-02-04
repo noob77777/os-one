@@ -22,10 +22,10 @@ InterruptDescriptorTable::InterruptDescriptorTable()
 
 InterruptDescriptorTable InterruptManager::IDT;
 DriverInterface *InterruptManager::drivers[] = {0};
-Port8bitPIC InterruptManager::picMasterCommandPort(0x20);
-Port8bitPIC InterruptManager::picMasterDataPort(0x21);
-Port8bitPIC InterruptManager::picSlaveCommandPort(0xA0);
-Port8bitPIC InterruptManager::picSlaveDataPort(0xA1);
+Port8bitPIC InterruptManager::pic_master_command_port(0x20);
+Port8bitPIC InterruptManager::pic_master_data_port(0x21);
+Port8bitPIC InterruptManager::pic_slave_command_port(0xA0);
+Port8bitPIC InterruptManager::pic_slave_data_port(0xA1);
 
 InterruptManager::InterruptManager(GlobalDescriptorTable *GDT)
 {
@@ -74,17 +74,17 @@ InterruptManager::InterruptManager(GlobalDescriptorTable *GDT)
     IDT.idt[0x2F] = GateDescriptor(&HandleInterruptRequest0x2F, gdt_cs, 0, IDT_INTERRUPT_GATE);
     IDT.idt[0x80] = GateDescriptor(&HandleInterruptRequest0x80, gdt_cs, 0, IDT_INTERRUPT_GATE);
 
-    picMasterCommandPort.write(0x11);
-    picSlaveCommandPort.write(0x11);
+    pic_master_command_port.write(0x11);
+    pic_slave_command_port.write(0x11);
 
-    picMasterDataPort.write(0x20);
-    picSlaveDataPort.write(0x28);
-    picMasterDataPort.write(0x04);
-    picSlaveDataPort.write(0x02);
-    picMasterDataPort.write(0x01);
-    picSlaveDataPort.write(0x01);
-    picMasterDataPort.write(0x00);
-    picSlaveDataPort.write(0x00);
+    pic_master_data_port.write(0x20);
+    pic_slave_data_port.write(0x28);
+    pic_master_data_port.write(0x04);
+    pic_slave_data_port.write(0x02);
+    pic_master_data_port.write(0x01);
+    pic_slave_data_port.write(0x01);
+    pic_master_data_port.write(0x00);
+    pic_slave_data_port.write(0x00);
 }
 
 InterruptManager::~InterruptManager()
@@ -116,9 +116,9 @@ uint32_t InterruptManager::handleInterrupt(uint8_t interrupt, uint32_t esp)
 
     if (0x20 <= interrupt && interrupt < 0x30)
     {
-        picMasterCommandPort.write(0x20);
+        pic_master_command_port.write(0x20);
         if (0x28 <= interrupt)
-            picSlaveCommandPort.write(0x20);
+            pic_slave_command_port.write(0x20);
     }
     
     return esp;

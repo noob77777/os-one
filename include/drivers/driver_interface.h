@@ -5,6 +5,8 @@
 #include <drivers/display.h>
 
 class InterruptManager;
+class PCIController;
+struct PCIDeviceDescriptor;
 
 class DriverInterface
 {
@@ -15,6 +17,18 @@ protected:
 public:
     virtual uint32_t handle_interrupt(uint32_t esp);
     friend class InterruptManager;
+};
+
+class PCIDriverInterface : public DriverInterface
+{
+protected:
+    uint16_t vendor_id;
+    uint16_t device_id;
+    PCIDriverInterface(uint8_t interrupt, uint16_t vendor_id = 0, uint16_t device_id = 0);
+
+public:
+    virtual void init(PCIDeviceDescriptor *dev);
+    friend class PCIController;
 };
 
 #endif
