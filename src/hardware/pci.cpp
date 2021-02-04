@@ -74,7 +74,6 @@ void PCIController::init(PCIDriverInterface **drivers, int num_drivers, Interrup
                     if (drivers[i]->device_id == dev.device_id && drivers[i]->vendor_id == dev.vendor_id)
                     {
                         drivers[i]->init(&dev);
-                        DriverInterface *test = (DriverInterface *)&drivers[i];
                         interrupt_manager->add_driver((DriverInterface *)drivers[i]);
                     }
                 }

@@ -2,26 +2,26 @@
 
 amd_am79c973::amd_am79c973()
     : PCIDriverInterface(0, 0x1022, 0x2000),
-      mac_address0_port(0x00),
-      mac_address2_port(0x02),
-      mac_address4_port(0x04),
-      register_data_port(0x10),
-      register_address_port(0x12),
-      reset_port(0x14),
-      bus_control_register_data_port(0x16)
+      mac_address0_port(0),
+      mac_address2_port(0),
+      mac_address4_port(0),
+      register_data_port(0),
+      register_address_port(0),
+      reset_port(0),
+      bus_control_register_data_port(0)
 {
     ;
 }
 
 amd_am79c973::amd_am79c973(PCIDeviceDescriptor *dev)
     : PCIDriverInterface(dev->interrupt, 0x1022, 0x2000),
-      mac_address0_port(dev->port_base),
-      mac_address2_port(dev->port_base + 0x02),
-      mac_address4_port(dev->port_base + 0x04),
-      register_data_port(dev->port_base + 0x10),
-      register_address_port(dev->port_base + 0x12),
-      reset_port(dev->port_base + 0x14),
-      bus_control_register_data_port(dev->port_base + 0x16)
+      mac_address0_port(dev->port_base + APROM0),
+      mac_address2_port(dev->port_base + APROM2),
+      mac_address4_port(dev->port_base + APROM4),
+      register_data_port(dev->port_base + RDP),
+      register_address_port(dev->port_base + RAP),
+      reset_port(dev->port_base + RESET),
+      bus_control_register_data_port(dev->port_base + BDP)
 {
     init(dev);
 }
@@ -29,13 +29,13 @@ amd_am79c973::amd_am79c973(PCIDeviceDescriptor *dev)
 void amd_am79c973::init(PCIDeviceDescriptor *dev)
 {
     this->interrupt = dev->interrupt;
-    mac_address0_port = Port16bit(dev->port_base);
-    mac_address2_port = Port16bit(dev->port_base + 0x02);
-    mac_address4_port = Port16bit(dev->port_base + 0x04);
-    register_data_port = Port16bit(dev->port_base + 0x10);
-    register_address_port = Port16bit(dev->port_base + 0x12);
-    reset_port = Port16bit(dev->port_base + 0x14);
-    bus_control_register_data_port = Port16bit(dev->port_base + 0x16);
+    mac_address0_port = Port16bit(dev->port_base + APROM0);
+    mac_address2_port = Port16bit(dev->port_base + APROM2);
+    mac_address4_port = Port16bit(dev->port_base + APROM4);
+    register_data_port = Port16bit(dev->port_base + RDP);
+    register_address_port = Port16bit(dev->port_base + RAP);
+    reset_port = Port16bit(dev->port_base + RESET);
+    bus_control_register_data_port = Port16bit(dev->port_base + BDP);
     current_send_buffer = 0;
     current_recv_buffer = 0;
 

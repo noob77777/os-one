@@ -24,7 +24,7 @@ class PCIDriverInterface : public DriverInterface
 protected:
     uint16_t vendor_id;
     uint16_t device_id;
-    PCIDriverInterface(uint8_t interrupt, uint16_t vendor_id = 0, uint16_t device_id = 0);
+    PCIDriverInterface(uint8_t interrupt, uint16_t vendor_id, uint16_t device_id);
 
 public:
     virtual void init(PCIDeviceDescriptor *dev);

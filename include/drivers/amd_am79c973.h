@@ -10,6 +10,14 @@
 
 class amd_am79c973 : public PCIDriverInterface
 {
+    const static int APROM0 = 0x00;
+    const static int APROM2 = 0x02;
+    const static int APROM4 = 0x04;
+    const static int RDP = 0x10;
+    const static int RAP = 0x12;
+    const static int RESET = 0x14;
+    const static int BDP = 0x16;
+
     struct InitializationBlock
     {
         uint16_t mode;
