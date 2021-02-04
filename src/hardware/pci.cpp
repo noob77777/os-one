@@ -29,7 +29,7 @@ bool PCIController::device_has_all_functions(uint16_t bus, uint16_t device)
     return read(bus, device, 0, 0x0E) & (1 << 7);
 }
 
-void PCIController::init()
+void PCIController::init(PCIDriverInterface **drivers, int num_drivers, InterruptManager *interrupt_manager)
 {
     for (int bus = 0; bus < NUM_BUSES; bus++)
     {
@@ -49,6 +49,7 @@ void PCIController::init()
                         dev.port_base = (uint32_t)bar.address;
                 }
 
+                /*
                 kprintf("PCI BUS ");
                 kprintf_hex8(bus & 0xFF);
 
@@ -66,10 +67,15 @@ void PCIController::init()
                 kprintf_hex8((dev.device_id & 0xFF00) >> 8);
                 kprintf_hex8(dev.device_id & 0xFF, false);
                 kprintf("\n");
+                */
 
-                if (dev.vendor_id == 0x1022 && dev.device_id == 0x2000)
+                for (int i = 0; i < num_drivers; i++)
                 {
-                    kprintf("amd_am79c973 found\n");
+                    if (drivers[i]->device_id == dev.device_id && drivers[i]->vendor_id == dev.vendor_id)
+                    {
+                        drivers[i]->init(&dev);
+                        interrupt_manager->add_driver((DriverInterface *)drivers[i]);
+                    }
                 }
             }
         }
@@ -116,7 +122,7 @@ PCIDeviceDescriptor PCIController::get_device_descriptor(uint16_t bus, uint16_t 
     result.interface_id = read(bus, device, function, 0x09);
 
     result.revision = read(bus, device, function, 0x08);
-    result.interrupt = read(bus, device, function, 0x3c);
+    result.interrupt = read(bus, device, function, 0x3c) + PCI_INT_BASE;
 
     return result;
 }

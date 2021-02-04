@@ -89,10 +89,10 @@ class InterruptManager
 
     static uint32_t handleInterrupt(uint8_t interrupt, uint32_t esp);
 
-    static Port8bitPIC picMasterCommandPort;
-    static Port8bitPIC picMasterDataPort;
-    static Port8bitPIC picSlaveCommandPort;
-    static Port8bitPIC picSlaveDataPort;
+    static Port8bitPIC pic_master_command_port;
+    static Port8bitPIC pic_master_data_port;
+    static Port8bitPIC pic_slave_command_port;
+    static Port8bitPIC pic_slave_data_port;
 
 public:
     InterruptManager(GlobalDescriptorTable *GDT);
