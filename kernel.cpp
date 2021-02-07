@@ -3,9 +3,11 @@
 #include <memory/virtual_memory.h>
 #include <memory/malloc.h>
 #include <hardware/interrupts.h>
+#include <hardware/pci.h>
 #include <drivers/display.h>
 #include <drivers/keyboard_driver.h>
 #include <drivers/ata.h>
+#include <drivers/amd_am79c973.h>
 #include <filesystem/filesystem.h>
 #include <sys/program.h>
 #include <sys/terminal.h>
@@ -33,21 +35,30 @@ GlobalDescriptorTable GDT;
 
 extern "C" void kernel_main(uint32_t arg)
 {
+    display::clear();
+
     IdentityVirtualMemory vm = IdentityVirtualMemory();
     enable_virtual_memory(vm.cr3());
 
-    InterruptManager interruptManager(&GDT);
+    MemoryManager::init();
+
+    InterruptManager interrupt_manager(&GDT);
     KeyboardDriver keyboard;
-    interruptManager.add_driver(&keyboard);
-    interruptManager.activate();
+    interrupt_manager.add_driver(&keyboard);
+    interrupt_manager.activate();
 
     display::clear();
-    kprintf("OS-ONE (version 0.0.1-target=i386)\n");
+    kprintf("OS-ONE (version 1.0-target=i386)\n");
+
+    amd_am79c973 eth0 = amd_am79c973();
+    PCIDriverInterface *pci_device_drivers[1];
+    pci_device_drivers[0] = &eth0;
+    PCIController PCI;
+    PCI.init(pci_device_drivers, 1, &interrupt_manager);
+    eth0.activate();
 
     ATA ata0m(true, 0x01F0);
     FileSystem fs(&ata0m);
-
-    MemoryManager::init();
 
     kprintf("\n");
     os_one();

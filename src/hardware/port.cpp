@@ -44,6 +44,22 @@ inline void Port::write8_pic(uint16_t _port, uint8_t _data)
                      : "a"(_data), "Nd"(_port));
 }
 
+inline uint32_t Port::read32(uint16_t _port)
+{
+    uint32_t result;
+    __asm__ volatile("inl %1, %0"
+                     : "=a"(result)
+                     : "Nd"(_port));
+    return result;
+}
+
+inline void Port::write32(uint16_t _port, uint32_t _data)
+{
+    __asm__ volatile("outl %0, %1"
+                     :
+                     : "a"(_data), "Nd"(_port));
+}
+
 Port8bit::Port8bit(uint16_t port) : Port(port) { ; }
 
 uint8_t Port8bit::read()
@@ -73,4 +89,16 @@ uint16_t Port16bit::read()
 void Port16bit::write(uint16_t data)
 {
     write16(port, data);
+}
+
+Port32bit::Port32bit(uint16_t port) : Port(port) { ; }
+
+uint32_t Port32bit::read()
+{
+    return read32(port);
+}
+
+void Port32bit::write(uint32_t data)
+{
+    write32(port, data);
 }
