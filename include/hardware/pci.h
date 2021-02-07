@@ -57,7 +57,7 @@ public:
     void write(uint16_t bus, uint16_t device, uint16_t function, uint32_t register_offset, uint32_t value);
     bool device_has_all_functions(uint16_t bus, uint16_t device);
 
-    void init(PCIDriverInterface **drivers, int num_drivers, InterruptManager *interrupt_manager);
+    void init(PCIDriverInterface *drivers[], int num_drivers, InterruptManager *interrupt_manager);
     PCIDeviceDescriptor get_device_descriptor(uint16_t bus, uint16_t device, uint16_t function);
     BaseAddressRegister get_base_address_register(uint16_t bus, uint16_t device, uint16_t function, uint16_t bar);
 };

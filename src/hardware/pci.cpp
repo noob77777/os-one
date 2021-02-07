@@ -29,7 +29,7 @@ bool PCIController::device_has_all_functions(uint16_t bus, uint16_t device)
     return read(bus, device, 0, 0x0E) & (1 << 7);
 }
 
-void PCIController::init(PCIDriverInterface **drivers, int num_drivers, InterruptManager *interrupt_manager)
+void PCIController::init(PCIDriverInterface *drivers[], int num_drivers, InterruptManager *interrupt_manager)
 {
     for (int bus = 0; bus < NUM_BUSES; bus++)
     {

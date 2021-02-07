@@ -49,7 +49,7 @@ void amd_am79c973::init(PCIDeviceDescriptor *dev)
     uint64_t MAC = MAC5 << 40 | MAC4 << 32 | MAC3 << 24 | MAC2 << 16 | MAC1 << 8 | MAC0;
 
     // 32 bit mode
-    register_address_port.write(20);
+    register_address_port.write(0x14);
     bus_control_register_data_port.write(0x102);
 
     // stop reset
@@ -95,9 +95,9 @@ void amd_am79c973::activate()
     register_address_port.write(0);
     register_data_port.write(0x41);
 
-    register_address_port.write(4);
+    register_address_port.write(0x4);
     uint32_t temp = register_data_port.read();
-    register_address_port.write(4);
+    register_address_port.write(0x4);
     register_data_port.write(temp | 0xC00);
 
     register_address_port.write(0);
