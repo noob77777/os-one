@@ -4,6 +4,8 @@
 #include <memory/malloc.h>
 #include <hardware/interrupts.h>
 #include <hardware/pci.h>
+#include <processmanager/processmanager.h>
+#include <drivers/timer.h>
 #include <drivers/display.h>
 #include <drivers/keyboard_driver.h>
 #include <drivers/ata.h>
@@ -33,23 +35,30 @@ extern "C" void init_constructors()
 
 GlobalDescriptorTable GDT;
 
-extern "C" void kernel_main(uint32_t arg)
+extern "C" void kernel_main()
 {
     display::clear();
 
+    // Memory init
     IdentityVirtualMemory vm = IdentityVirtualMemory();
     enable_virtual_memory(vm.cr3());
-
     MemoryManager::init();
 
+    // Interrupt Manager init
     InterruptManager interrupt_manager(&GDT);
     KeyboardDriver keyboard;
     interrupt_manager.add_driver(&keyboard);
+    Process main(&GDT, nullptr);
+    ProcessManager process_manager;
+    process_manager.add_process(&main, 0);
+    Timer timer(&process_manager);
+    interrupt_manager.add_driver(&timer);
     interrupt_manager.activate();
 
     display::clear();
     kprintf("OS-ONE (version 1.0-target=i386)\n");
 
+    // Ethernet init
     amd_am79c973 eth0 = amd_am79c973();
     PCIDriverInterface *pci_device_drivers[1];
     pci_device_drivers[0] = &eth0;
@@ -57,6 +66,7 @@ extern "C" void kernel_main(uint32_t arg)
     PCI.init(pci_device_drivers, 1, &interrupt_manager);
     eth0.activate();
 
+    // File System init
     ATA ata0m(true, 0x01F0);
     FileSystem fs(&ata0m);
 
