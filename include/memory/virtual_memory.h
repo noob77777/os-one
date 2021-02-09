@@ -67,4 +67,17 @@ public:
     virtual uint32_t cr3();
 };
 
+/*
+ * 32 MiB with Base 0x00000000 => kernel
+ * 16 MiB with Base 0xF0000000 => user loaded programs
+ */
+class SplitVirtualMemory : public VirtualMemory
+{
+    PageTable page_table_array[12] __attribute__((aligned(4096))); // 32 + 16 MiB
+    const static int OFFSET = (0xF0000000 / (4096 * 1024));
+public:
+    SplitVirtualMemory();
+    virtual uint32_t cr3();
+};
+
 #endif

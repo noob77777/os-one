@@ -40,7 +40,7 @@ extern "C" void kernel_main()
     display::clear();
 
     // Memory init
-    IdentityVirtualMemory vm = IdentityVirtualMemory();
+    SplitVirtualMemory vm = SplitVirtualMemory();
     enable_virtual_memory(vm.cr3());
     MemoryManager::init();
 
