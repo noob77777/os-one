@@ -59,3 +59,27 @@ uint32_t IdentityVirtualMemory::cr3()
 {
     return ((uint32_t)&page_directory);
 }
+
+SplitVirtualMemory::SplitVirtualMemory() : VirtualMemory()
+{
+    for (int i = 0; i < 8; i++)
+    {
+        for (int j = 0; j < 1024; j++)
+            page_table_array[i].set_entry(j, PageTableEntry(((i * 1024) + j) * 0x1000, 1, 1, 0));
+
+        page_directory.set_entry(i, PageDirectoryEntry((uint32_t)&page_table_array[i], 1, 1, 0));
+    }
+
+    for (int i = 8; i < 12; i++)
+    {
+        for (int j = 0; j < 1024; j++)
+            page_table_array[i].set_entry(j, PageTableEntry(((i * 1024) + j) * 0x1000, 1, 1, 0));
+
+        page_directory.set_entry(i + OFFSET - 8, PageDirectoryEntry((uint32_t)&page_table_array[i], 1, 1, 0));
+    }
+}
+
+uint32_t SplitVirtualMemory::cr3()
+{
+    return ((uint32_t)&page_directory);
+}

@@ -15,7 +15,7 @@ An operating system targeted for i386 machines. <br />
 3. Qemu
 
 Works with legacy BIOS settings and PS2 keyboards on real systems. <br />
-Network card driver may not work.
+Network card driver may not work with specific hardware configurations.
 
 ### To build from source <br />
 1. make setup_build (first build only)

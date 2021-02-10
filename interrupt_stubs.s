@@ -5,6 +5,7 @@
 .global _ZN16InterruptManager19HandleException\num\()Ev
 _ZN16InterruptManager19HandleException\num\()Ev:
     movb $\num, (interrupt_number)
+    pushl $0
     jmp common_stub
 .endm
 
@@ -12,6 +13,7 @@ _ZN16InterruptManager19HandleException\num\()Ev:
 .global _ZN16InterruptManager26HandleInterruptRequest\num\()Ev
 _ZN16InterruptManager26HandleInterruptRequest\num\()Ev:
     movb $\num, (interrupt_number)
+    pushl $0
     jmp common_stub
 .endm
 
@@ -56,20 +58,26 @@ HandleInterruptRequest 0x2F
 HandleInterruptRequest 0x80
 
 common_stub:
-    pusha
-    pushl %ds
-    pushl %es
-    pushl %fs
-    pushl %gs
+    pushl %ebp
+    pushl %edi
+    pushl %esi
+    pushl %edx
+    pushl %ecx
+    pushl %ebx
+    pushl %eax
     pushl %esp
     push (interrupt_number)
     call handle_interrupt_main
     mov %eax, %esp
-    pop %gs
-    pop %fs
-    pop %es
-    pop %ds
-    popa
+    popl %eax
+    popl %ebx
+    popl %ecx
+    popl %edx
+    popl %esi
+    popl %edi
+    popl %ebp
+
+    addl $4, %esp
 
 .global _ZN16InterruptManager15InterruptIgnoreEv
 _ZN16InterruptManager15InterruptIgnoreEv:
