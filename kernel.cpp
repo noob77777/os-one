@@ -14,6 +14,7 @@
 #include <sys/program.h>
 #include <sys/terminal.h>
 #include <sys/hello.h>
+#include <sys/exec.h>
 #include <sys/system_software.h>
 #include <simpletext/simpletext.h>
 
@@ -91,6 +92,8 @@ extern "C" void kernel_main()
     program_manager.add_program(&clear);
     SimpleText simpletext(&fs, &keyboard);
     program_manager.add_program(&simpletext);
+    Exec exec(&GDT, &keyboard, &fs, &process_manager);
+    program_manager.add_program(&exec);
     program_manager.start();
 
     for (;;)

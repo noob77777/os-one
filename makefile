@@ -12,7 +12,7 @@ TMP = tmp
 build_directories = $(BUILD) $(BUILD)/drivers $(BUILD)/filesystem $(BUILD)/hardware $(BUILD)/lib $(BUILD)/memory $(BUILD)/sys $(BUILD)/processmanager
 sw_build_directories = $(BUILD)/simpletext
 kernel_main = $(BUILD)/kernel.o
-as_objects = $(BUILD)/loader.o $(BUILD)/interrupt_stubs.o $(BUILD)/virtual_memory_switch.o
+as_objects = $(BUILD)/loader.o $(BUILD)/interrupt_stubs.o $(BUILD)/virtual_memory_switch.o $(BUILD)/exec_loader.o
 cpp_objects = $(patsubst $(SRC)/%.cpp, $(BUILD)/%.o, $(wildcard $(SRC)/*/*.cpp))
 
 setup_build:
