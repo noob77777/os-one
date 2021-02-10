@@ -60,8 +60,6 @@ uint32_t IdentityVirtualMemory::cr3()
     return ((uint32_t)&page_directory);
 }
 
-#include <drivers/display.h>
-
 SplitVirtualMemory::SplitVirtualMemory() : VirtualMemory()
 {
     for (int i = 0; i < 8; i++)

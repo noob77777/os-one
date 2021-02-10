@@ -6,13 +6,6 @@
 #include <drivers/display.h>
 #include <processmanager/scheduler.h>
 
-namespace processmanager
-{
-    void test1();
-    void test2();
-    void testmain();
-} // namespace processmanager
-
 struct process_state
 {
     uint32_t eax;

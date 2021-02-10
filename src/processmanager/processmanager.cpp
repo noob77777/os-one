@@ -1,26 +1,5 @@
 #include <processmanager/processmanager.h>
 
-namespace processmanager
-{
-    void test1()
-    {
-        for (;;)
-            kprintf("A");
-    }
-
-    void test2()
-    {
-        for (;;)
-            kprintf("B");
-    }
-
-    void testmain()
-    {
-        for (;;)
-            kprintf("main");
-    }
-} // namespace processmanager
-
 Process::Process(GlobalDescriptorTable *GDT, void _start())
 {
     state = (process_state *)(stack + STACK_SIZE - sizeof(process_state));
