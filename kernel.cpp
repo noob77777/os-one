@@ -19,8 +19,6 @@
 #include <sys/system_software.h>
 #include <simpletext/simpletext.h>
 
-#include <lib/inet.h>
-
 void os_one()
 {
     kprintf(" _____  _______      _____  __   _ _______\n");
