@@ -4,18 +4,18 @@ namespace ethernet
 {
     void receive_handler(uint8_t *buffer, int size)
     {
-        EthernetII::receive(buffer, size);
+        Ethernet::receive(buffer, size);
     }
 } // namespace ethernet
 
-NICDriver *EthernetII::nic = 0;
+NICDriver *Ethernet::nic = 0;
 
-void EthernetII::set_nic(NICDriver *nic)
+void Ethernet::set_nic(NICDriver *nic)
 {
-    EthernetII::nic = nic;
+    Ethernet::nic = nic;
 }
 
-void EthernetII::receive(uint8_t *buffer, int size)
+void Ethernet::receive(uint8_t *buffer, int size)
 {
     // call appropriate handler
     return;

@@ -11,7 +11,7 @@ namespace ethernet
     void receive_handler(uint8_t *buffer, int size);
 } // namespace ethernet
 
-class EthernetII
+class Ethernet
 {
     static NICDriver *nic;
     const static uint16_t TYPE_OFFSET = 0x05dc;
