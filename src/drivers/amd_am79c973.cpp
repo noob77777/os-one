@@ -176,3 +176,8 @@ void amd_am79c973::receive()
         recv_buffer_descr[current_recv_buffer].flags = 0x8000F7FF;
     }
 }
+
+uint64_t amd_am79c973::mac_address()
+{
+    return init_block.physical_address;
+}

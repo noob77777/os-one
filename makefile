@@ -9,7 +9,7 @@ SRC = src
 BUILD = build
 TMP = tmp
 
-build_directories = $(BUILD) $(BUILD)/drivers $(BUILD)/filesystem $(BUILD)/hardware $(BUILD)/lib $(BUILD)/memory $(BUILD)/sys $(BUILD)/processmanager $(BUILD)/net
+build_directories = $(BUILD) $(BUILD)/drivers $(BUILD)/filesystem $(BUILD)/hardware $(BUILD)/lib $(BUILD)/memory $(BUILD)/sys $(BUILD)/processmanager $(BUILD)/inet
 sw_build_directories = $(BUILD)/simpletext
 kernel_main = $(BUILD)/kernel.o
 as_objects = $(BUILD)/loader.o $(BUILD)/interrupt_stubs.o $(BUILD)/virtual_memory_switch.o $(BUILD)/exec_loader.o

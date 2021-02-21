@@ -72,6 +72,7 @@ public:
 
     virtual void send(uint8_t *buffer, int size);
     virtual void receive();
+    virtual uint64_t mac_address();
 };
 
 #endif

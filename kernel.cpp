@@ -10,7 +10,7 @@
 #include <drivers/keyboard_driver.h>
 #include <drivers/ata.h>
 #include <drivers/amd_am79c973.h>
-#include <net/ethernet.h>
+#include <inet/ethernet.h>
 #include <filesystem/filesystem.h>
 #include <sys/program.h>
 #include <sys/terminal.h>
@@ -18,6 +18,8 @@
 #include <sys/exec.h>
 #include <sys/system_software.h>
 #include <simpletext/simpletext.h>
+
+#include <lib/inet.h>
 
 void os_one()
 {
@@ -67,7 +69,6 @@ extern "C" void kernel_main()
     PCIController PCI;
     PCI.init(pci_device_drivers, 1, &interrupt_manager);
     eth0.activate();
-    // Ethernet ethernet_conn(&eth0);
 
     // File System init
     ATA ata0m(true, 0x01F0);
