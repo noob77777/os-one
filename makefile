@@ -9,7 +9,7 @@ SRC = src
 BUILD = build
 TMP = tmp
 
-build_directories = $(BUILD) $(BUILD)/drivers $(BUILD)/filesystem $(BUILD)/hardware $(BUILD)/lib $(BUILD)/memory $(BUILD)/sys $(BUILD)/processmanager
+build_directories = $(BUILD) $(BUILD)/drivers $(BUILD)/filesystem $(BUILD)/hardware $(BUILD)/lib $(BUILD)/memory $(BUILD)/sys $(BUILD)/processmanager $(BUILD)/net
 sw_build_directories = $(BUILD)/simpletext
 kernel_main = $(BUILD)/kernel.o
 as_objects = $(BUILD)/loader.o $(BUILD)/interrupt_stubs.o $(BUILD)/virtual_memory_switch.o $(BUILD)/exec_loader.o
@@ -19,7 +19,7 @@ setup_build:
 	mkdir $(build_directories)
 	mkdir $(sw_build_directories)
 
-$(TMP)%.s: %.cpp
+$(TMP)/%.s: %.cpp
 	g++ $(GCCPARAMS) -S -o $@ $<
 
 $(kernel_main): kernel.cpp
@@ -56,5 +56,5 @@ run: kernel.iso
 	qemu-system-i386 prod/kernel.iso
 
 clean:
-	rm -rf -f build
+	rm -rf -f $(BUILD)
 	make setup_build

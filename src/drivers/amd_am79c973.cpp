@@ -1,7 +1,7 @@
 #include <drivers/amd_am79c973.h>
 
 amd_am79c973::amd_am79c973()
-    : PCIDriverInterface(0, 0x1022, 0x2000),
+    : PCIDriverInterface(0, 0x1022, 0x2000), NICDriver(),
       mac_address0_port(0),
       mac_address2_port(0),
       mac_address4_port(0),
@@ -14,7 +14,7 @@ amd_am79c973::amd_am79c973()
 }
 
 amd_am79c973::amd_am79c973(PCIDeviceDescriptor *dev)
-    : PCIDriverInterface(dev->interrupt, 0x1022, 0x2000),
+    : PCIDriverInterface(dev->interrupt, 0x1022, 0x2000), NICDriver(),
       mac_address0_port(dev->port_base + APROM0),
       mac_address2_port(dev->port_base + APROM2),
       mac_address4_port(dev->port_base + APROM4),
@@ -166,14 +166,10 @@ void amd_am79c973::receive()
 
         {
             uint32_t size = recv_buffer_descr[current_recv_buffer].flags & 0xFFF;
-
             uint8_t *buffer = (uint8_t *)(recv_buffer_descr[current_recv_buffer].address);
 
-            for (int i = 0; i < size; i++)
-            {
-                kprintf_hex8(buffer[i], false);
-                kprintf(" ");
-            }
+            if (receive_handler != nullptr)
+                receive_handler(buffer, size);
         }
 
         recv_buffer_descr[current_recv_buffer].flags2 = 0;
