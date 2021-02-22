@@ -101,6 +101,8 @@ void Ethernet::send(uint64_t dest, uint16_t protocol, uint8_t *buffer, int size)
 {
     if (Ethernet::nic == 0)
         return;
+
+    size = min(size, MAX_SZ - HEADER_LEN - FOOTER_LEN);
     int frame_size = size + Ethernet::HEADER_LEN + Ethernet::FOOTER_LEN;
     uint8_t frame[MAX_SZ];
     for (int i = 0; i < size; i++)

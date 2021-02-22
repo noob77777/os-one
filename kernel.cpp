@@ -69,7 +69,7 @@ extern "C" void kernel_main()
     eth0.set_receive_handler(ethernet::receive_handler);
     Ethernet::set_nic(&eth0);
     eth0.activate();
-    
+
     // File System init
     ATA ata0m(true, 0x01F0);
     FileSystem fs(&ata0m);
