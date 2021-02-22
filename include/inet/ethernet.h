@@ -4,7 +4,7 @@
 #include <types.h>
 #include <lib/inet.h>
 #include <drivers/nic_driver.h>
-#include <memory/malloc.h>
+#include <drivers/display.h>
 
 namespace ethernet
 {
@@ -15,6 +15,9 @@ class Ethernet
 {
     static NICDriver *nic;
     const static uint16_t TYPE_OFFSET = 0x05dc;
+    const static int HEADER_LEN = 14;
+    const static int FOOTER_LEN = 4;
+    const static int MAX_SZ = 1518;
     // TODO: add an static array of handlers for internet layer protocols
 
     /*
@@ -46,7 +49,7 @@ class Ethernet
      * params: dest => [little endian]
      * generates part of the Ethernet II header inplace
      */
-    static void add_dest_addr(uint8_t *buffer, int size, uint64_t *dest);
+    static void add_dest_addr(uint8_t *buffer, int size, uint64_t dest);
 
     /*
      * params: [none]. Retrieves mac address from nic
@@ -72,7 +75,7 @@ public:
      * params: dest [little endian]. Destination MAC address.
      *         protocol [little endian]. Internet layer protocol.
      */
-    static void send(uint64_t *dest, uint16_t *protocol, uint8_t *buffer, int size);
+    static void send(uint64_t dest, uint16_t protocol, uint8_t *buffer, int size);
 
     /*
      * Receive interrupt handler. Calls appropriate internet layer handler.

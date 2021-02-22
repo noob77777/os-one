@@ -165,7 +165,7 @@ void amd_am79c973::receive()
         if (!(recv_buffer_descr[current_recv_buffer].flags & 0x40000000) && (recv_buffer_descr[current_recv_buffer].flags & 0x03000000) == 0x03000000)
 
         {
-            uint32_t size = recv_buffer_descr[current_recv_buffer].flags & 0xFFF;
+            uint32_t size = recv_buffer_descr[current_recv_buffer].flags2 & 0xFFF;
             uint8_t *buffer = (uint8_t *)(recv_buffer_descr[current_recv_buffer].address);
 
             if (receive_handler != nullptr)
