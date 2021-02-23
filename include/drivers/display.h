@@ -2,9 +2,11 @@
 #define __DISPLAY_H
 
 #include <types.h>
+#include <lib/string.h>
 
 static const int WIDTH = 80;
 static const int HEIGHT = 25;
+static const int DEFAULT_THEME = 0x07;
 static char *const VIDEO_MEMORY = (char *const)0x000B8000;
 static const char *hex = "0123456789ABCDEF";
 
@@ -18,6 +20,7 @@ namespace display
 } // namespace display
 
 void kprintf(const char *str);
+void kprintf_notify(const char *str);
 void kprintf_hex8(uint8_t value, bool flag = true);
 void kprintf_hex(uint32_t value);
 

@@ -3,12 +3,13 @@
 
 #include <types.h>
 #include <drivers/display.h>
+#include <drivers/nic_driver.h>
 #include <drivers/driver_interface.h>
 #include <hardware/pci.h>
 #include <hardware/interrupts.h>
 #include <hardware/port.h>
 
-class amd_am79c973 : public PCIDriverInterface
+class amd_am79c973 : public PCIDriverInterface, public NICDriver
 {
     const static int APROM0 = 0x00;
     const static int APROM2 = 0x02;
@@ -69,8 +70,9 @@ public:
     virtual uint32_t handle_interrupt(uint32_t esp);
     virtual void init(PCIDeviceDescriptor *dev);
 
-    void send(uint8_t *buffer, int size);
-    void receive();
+    virtual void send(uint8_t *buffer, int size);
+    virtual void receive();
+    virtual uint64_t mac_address();
 };
 
 #endif

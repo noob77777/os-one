@@ -1,7 +1,7 @@
 #include <drivers/amd_am79c973.h>
 
 amd_am79c973::amd_am79c973()
-    : PCIDriverInterface(0, 0x1022, 0x2000),
+    : PCIDriverInterface(0, 0x1022, 0x2000), NICDriver(),
       mac_address0_port(0),
       mac_address2_port(0),
       mac_address4_port(0),
@@ -14,7 +14,7 @@ amd_am79c973::amd_am79c973()
 }
 
 amd_am79c973::amd_am79c973(PCIDeviceDescriptor *dev)
-    : PCIDriverInterface(dev->interrupt, 0x1022, 0x2000),
+    : PCIDriverInterface(dev->interrupt, 0x1022, 0x2000), NICDriver(),
       mac_address0_port(dev->port_base + APROM0),
       mac_address2_port(dev->port_base + APROM2),
       mac_address4_port(dev->port_base + APROM4),
@@ -118,17 +118,17 @@ uint32_t amd_am79c973::handle_interrupt(uint32_t esp)
     if ((temp & 0x0100) == 0x0100)
         kprintf("AMD am79c973 Network Card Detected\n");
     if ((temp & 0x8000) == 0x8000)
-        kprintf("AMD am79c973 ERROR\n");
+        kprintf_notify("AMD am79c973 ERROR");
     if ((temp & 0x2000) == 0x2000)
-        kprintf("AMD am79c973 COLLISION ERROR\n");
+        kprintf_notify("AMD am79c973 COLLISION ERROR");
     if ((temp & 0x1000) == 0x1000)
-        kprintf("AMD am79c973 MISSED FRAME\n");
+        kprintf_notify("AMD am79c973 MISSED FRAME");
     if ((temp & 0x0800) == 0x0800)
-        kprintf("AMD am79c973 MEMORY ERROR\n");
+        kprintf_notify("AMD am79c973 MEMORY ERROR");
     if ((temp & 0x0400) == 0x0400)
-        kprintf("AMD am79c973 RECV:\n"), receive();
+        kprintf_notify("AMD am79c973 RECV"), receive();
     if ((temp & 0x0200) == 0x0200)
-        kprintf("AMD am79c973 DATA SENT\n");
+        kprintf_notify("AMD am79c973 DATA SENT");
 
     // acknowledge
     register_address_port.write(0);
@@ -165,18 +165,19 @@ void amd_am79c973::receive()
         if (!(recv_buffer_descr[current_recv_buffer].flags & 0x40000000) && (recv_buffer_descr[current_recv_buffer].flags & 0x03000000) == 0x03000000)
 
         {
-            uint32_t size = recv_buffer_descr[current_recv_buffer].flags & 0xFFF;
-
+            uint32_t size = recv_buffer_descr[current_recv_buffer].flags2 & 0xFFF;
             uint8_t *buffer = (uint8_t *)(recv_buffer_descr[current_recv_buffer].address);
 
-            for (int i = 0; i < size; i++)
-            {
-                kprintf_hex8(buffer[i], false);
-                kprintf(" ");
-            }
+            if (receive_handler != nullptr)
+                receive_handler(buffer, size);
         }
 
         recv_buffer_descr[current_recv_buffer].flags2 = 0;
         recv_buffer_descr[current_recv_buffer].flags = 0x8000F7FF;
     }
+}
+
+uint64_t amd_am79c973::mac_address()
+{
+    return init_block.physical_address;
 }

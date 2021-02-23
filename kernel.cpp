@@ -10,6 +10,7 @@
 #include <drivers/keyboard_driver.h>
 #include <drivers/ata.h>
 #include <drivers/amd_am79c973.h>
+#include <inet/ethernet.h>
 #include <filesystem/filesystem.h>
 #include <sys/program.h>
 #include <sys/terminal.h>
@@ -65,6 +66,8 @@ extern "C" void kernel_main()
     pci_device_drivers[0] = &eth0;
     PCIController PCI;
     PCI.init(pci_device_drivers, 1, &interrupt_manager);
+    eth0.set_receive_handler(ethernet::receive_handler);
+    Ethernet::set_nic(&eth0);
     eth0.activate();
 
     // File System init

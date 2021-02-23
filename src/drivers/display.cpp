@@ -6,7 +6,7 @@ namespace display
     {
         for (y_coordinate = 0; y_coordinate < HEIGHT; y_coordinate++)
             for (x_coordinate = 0; x_coordinate < WIDTH; x_coordinate++)
-                VIDEO_MEMORY[2 * (WIDTH * y_coordinate + x_coordinate)] = ' ', VIDEO_MEMORY[2 * (WIDTH * y_coordinate + x_coordinate) + 1] = 0x07;
+                VIDEO_MEMORY[2 * (WIDTH * y_coordinate + x_coordinate)] = ' ', VIDEO_MEMORY[2 * (WIDTH * y_coordinate + x_coordinate) + 1] = DEFAULT_THEME;
         x_coordinate = 0;
         y_coordinate = 0;
     }
@@ -16,7 +16,7 @@ namespace display
         if (x_coordinate > 0)
         {
             x_coordinate--;
-            VIDEO_MEMORY[2 * (WIDTH * y_coordinate + x_coordinate)] = ' ';
+            VIDEO_MEMORY[2 * (WIDTH * y_coordinate + x_coordinate)] = ' ', VIDEO_MEMORY[2 * (WIDTH * y_coordinate + x_coordinate) + 1] = DEFAULT_THEME;
         }
     }
 } // namespace display
@@ -35,7 +35,7 @@ void kprintf(const char *str)
             x_coordinate += 4;
             break;
         default:
-            VIDEO_MEMORY[2 * (WIDTH * y_coordinate + x_coordinate)] = str[i];
+            VIDEO_MEMORY[2 * (WIDTH * y_coordinate + x_coordinate)] = str[i], VIDEO_MEMORY[2 * (WIDTH * y_coordinate + x_coordinate) + 1] = DEFAULT_THEME;
             x_coordinate++;
             break;
         }
@@ -50,10 +50,34 @@ void kprintf(const char *str)
         {
             for (y_coordinate = 0; y_coordinate < HEIGHT; y_coordinate++)
                 for (x_coordinate = 0; x_coordinate < WIDTH; x_coordinate++)
-                    VIDEO_MEMORY[2 * (WIDTH * y_coordinate + x_coordinate)] = ' ';
+                    VIDEO_MEMORY[2 * (WIDTH * y_coordinate + x_coordinate)] = ' ', VIDEO_MEMORY[2 * (WIDTH * y_coordinate + x_coordinate) + 1] = DEFAULT_THEME;
             x_coordinate = 0;
             y_coordinate = 0;
         }
+    }
+}
+
+void kprintf_notify(const char *str)
+{
+    int nxi = WIDTH - 1;
+    int nyi = HEIGHT - 1;
+    int n = strlen(str);
+    for (int i = n - 1; i >= 0; --i)
+    {
+        switch (str[i])
+        {
+        case '\n':
+            nxi = WIDTH - 1;
+            break;
+        case '\t':
+            nxi -= 4;
+            break;
+        default:
+            VIDEO_MEMORY[2 * (WIDTH * nyi + nxi)] = str[i], VIDEO_MEMORY[2 * (WIDTH * nyi + nxi) + 1] = 0x70;
+            nxi = (nxi - 1);
+        }
+        if (nxi < 0)
+            nxi = WIDTH - 1;
     }
 }
 
