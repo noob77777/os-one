@@ -118,17 +118,17 @@ uint32_t amd_am79c973::handle_interrupt(uint32_t esp)
     if ((temp & 0x0100) == 0x0100)
         kprintf("AMD am79c973 Network Card Detected\n");
     if ((temp & 0x8000) == 0x8000)
-        kprintf("AMD am79c973 ERROR\n");
+        kprintf_notify("AMD am79c973 ERROR");
     if ((temp & 0x2000) == 0x2000)
-        kprintf("AMD am79c973 COLLISION ERROR\n");
+        kprintf_notify("AMD am79c973 COLLISION ERROR");
     if ((temp & 0x1000) == 0x1000)
-        kprintf("AMD am79c973 MISSED FRAME\n");
+        kprintf_notify("AMD am79c973 MISSED FRAME");
     if ((temp & 0x0800) == 0x0800)
-        kprintf("AMD am79c973 MEMORY ERROR\n");
+        kprintf_notify("AMD am79c973 MEMORY ERROR");
     if ((temp & 0x0400) == 0x0400)
-        kprintf("AMD am79c973 RECV:\n"), receive();
+        kprintf_notify("AMD am79c973 RECV"), receive();
     if ((temp & 0x0200) == 0x0200)
-        kprintf("AMD am79c973 DATA SENT\n");
+        kprintf_notify("AMD am79c973 DATA SENT");
 
     // acknowledge
     register_address_port.write(0);
